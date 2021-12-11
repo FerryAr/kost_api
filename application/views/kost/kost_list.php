@@ -265,8 +265,10 @@
             <th>Hp</th>
             <th>Jenis Kost</th>
             <th>Tipe Kost</th>
+            <th>Harga</th>
+            <th>Fasilitas</th>
             <th>Area Terdekat</th>
-            <th>Foto Unggulan</th>
+            <th>Foto</th>
             <th width="200px">Action</th>
         </tr>
     </thead>
@@ -290,6 +292,8 @@
     <!-- Page level plugins -->
     <script src="<?= base_url('assets/vendor/datatables/jquery.dataTables.min.js') ?>"></script>
     <script src="<?= base_url('assets/vendor/datatables/dataTables.bootstrap4.min.js') ?>"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
         $.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings) {
@@ -318,6 +322,7 @@
             oLanguage: {
                 sProcessing: "loading..."
             },
+            responsive: true,
             processing: true,
             serverSide: true,
             ajax: {
@@ -342,12 +347,27 @@
                     "data": "type"
                 },
                 {
+                    "data": "harga"
+                },
+                {
+                    "data": "fasilitas"
+
+                },
+                {
                     "data": "area_terdekat"
-                }, {
-                    "data": "foto_unggulan",
-                    "render": function(data, type, row, meta) {
-                        return '<img src="<?= base_url('assets/img/') ?>' + data + '" width="500" />';
-                    }
+                },
+                {
+                    "data": "foto",
+                    "render": function(data) {
+                        var foto = data.split(',');
+                        var output = '';
+                        for (var i = 0; i < foto.length; i++) {
+                            output += '<img class="img-responsive" src="<?php echo base_url() ?>assets/img/' + foto[i] + '" style="margin: 2rem 2rem 2rem 2rem";/>';
+                        }
+                        return output;
+                        //return '<img src="<?php echo base_url() ?>assets/img/'+data+'" style="width: 100%; height: 100%;" />';
+                    },
+                    "orderable": false
                 },
                 {
                     "data": "action",

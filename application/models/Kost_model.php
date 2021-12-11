@@ -16,12 +16,23 @@ class Kost_model extends CI_Model
     }
 
     // datatables
+    // function json() {
+    //     $this->datatables->select('kost.id,kost.nama_kost,kost.pemilik,kost.alamat,kost.hp,jenis_kost.jenis,kost_type.type,GROUP_CONCAT(kost_foto.foto) AS foto, kost.fasilitas, kost.area_terdekat');
+    //     $this->datatables->from('kost');
+    //     //add this line for join
+    //     $this->datatables->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id');
+    //     $this->datatables->join('kost_type', 'kost.type_kost = kost_type.id');
+    //     $this->datatables->join('kost_foto', 'kost.id=kost_foto.kost_id');
+    //     $this->datatables->add_column('action', anchor(site_url('kost/read/$1'),'Read')." | ".anchor(site_url('kost/update/$1'),'Update')." | ".anchor(site_url('kost/delete/$1'),'Delete','onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'id');
+    //     return $this->datatables->generate();
+    // }
+
     function json() {
-        $this->datatables->select('kost.id,kost.nama_kost,kost.pemilik,kost.alamat,kost.hp,jenis_kost.jenis,kost_type.type,kost.area_terdekat, kost.foto_unggulan');
+        $this->datatables->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.fasilitas, kost.area_terdekat');
         $this->datatables->from('kost');
-        //add this line for join
         $this->datatables->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id');
         $this->datatables->join('kost_type', 'kost.type_kost = kost_type.id');
+        $this->datatables->join('kost_foto', 'kost.id=kost_foto.kost_id');
         $this->datatables->add_column('action', anchor(site_url('kost/read/$1'),'Read')." | ".anchor(site_url('kost/update/$1'),'Update')." | ".anchor(site_url('kost/delete/$1'),'Delete','onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'id');
         return $this->datatables->generate();
     }
@@ -36,9 +47,9 @@ class Kost_model extends CI_Model
     // get data by id
     function get_by_id($id)
     {
-        $query = $this->db->select('kost.id,kost.nama_kost,kost.pemilik,kost.alamat,kost.hp,kost.jenis_kost,kost.type_kost,jenis_kost.jenis,kost.area_terdekat,kost.foto_unggulan')
+        $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp, kost.jenis_kost, kost.type_kost, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.fasilitas, kost.area_terdekat')
             ->from('kost')
-            ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
+            ->join('kost_foto', 'kost.id=kost_foto.kost_id')
             ->where('kost.id', $id)
             ->get();
         return $query->row();

@@ -91,6 +91,8 @@ class Kost extends CI_Controller
             'type_kost' => $type_kost,
             'jenis_selected' => '',
             'type_selected' => '',
+            'harga' => set_value('harga'),
+            'fasilitas' => set_value('fasilitas'),
             'area_terdekat' => set_value('area_terdekat'),
             'first_name' => $this->ion_auth->user()->row()->first_name,
         );
@@ -104,22 +106,41 @@ class Kost extends CI_Controller
         // $this->_rules();
 
         if ($this->input->post()) {
-            $gambar = $this->Upload_model->images('assets/img', 'Foto-Unggulan-', $_FILES['foto_unggulan']);
-            $data = array(
-                'nama_kost' => $this->input->post('nama_kost', TRUE),
-                'pemilik' => $this->input->post('pemilik', TRUE),
-                'alamat' => $this->input->post('alamat', TRUE),
-                'hp' => $this->input->post('hp', TRUE),
-                'jenis_kost' => $this->input->post('jenis_kost', TRUE),
-                'type_kost' => $this->input->post('type_kost', TRUE),
-                'area_terdekat' => $this->input->post('area_terdekat', TRUE),
-                'foto_unggulan' => $gambar,
-            );
-            $this->Kost_model->insert($data);
-            $this->session->set_flashdata('message', 'Create Record Success');
-            redirect(site_url('kost'));
-        } else {
+            $config['upload_path']          = realpath(APPPATH . '../assets/img');
+            $config['allowed_types']        = 'gif|jpg|png';
+            $config['max_size']             = 100;
+            $config['max_width']            = 1024;
+            $config['max_height']           = 768;
+            $this->load->library('upload', $config);
+
+            if ($this->input->post('fasilitas') == '') {
+                $this->session->set_flashdata('message', 'Fasilitas belum dipilih');
+                redirect(site_url('kost_detail'));
+            } else {
+                $data = array(
+                    'nama_kost' => $this->input->post('nama_kost', TRUE),
+                    'pemilik' => $this->input->post('pemilik', TRUE),
+                    'alamat' => $this->input->post('alamat', TRUE),
+                    'hp' => $this->input->post('hp', TRUE),
+                    'jenis_kost' => $this->input->post('jenis_kost', TRUE),
+                    'type_kost' => $this->input->post('type_kost', TRUE),
+                    'harga' => $this->input->post('harga'),
+                    'fasilitas' => implode(',', $this->input->post('fasilitas')),
+                    'area_terdekat' => $this->input->post('area_terdekat', TRUE),
+                );
+                $this->Kost_model->insert($data);
+                $gambars = $this->Upload_model->mupload_files('assets/img', '', $_FILES['foto_kost']);
+                $id = $this->db->insert_id();
+
+                foreach ($gambars as $gambar) {
+                    $this->db->insert('kost_foto', array('foto' => $gambar, 'kost_id' => $id));
+                }
+                // return $this->db->error();
+                $this->session->set_flashdata('message', 'Create Record Success');
+                redirect(site_url('kost'));
+            }
             
+        } else {
         }
     }
 
@@ -141,6 +162,9 @@ class Kost extends CI_Controller
                 'type_kost' => $type_kost,
                 'jenis_selected' => $row->jenis_kost,
                 'type_selected' => $row->type_kost,
+                'harga' => set_value('harga', $row->harga),
+                'fasilitas' => set_value('fasilitas', $row->fasilitas),
+                'foto' => $row->foto,
                 'area_terdekat' => set_value('area_terdekat', $row->area_terdekat),
             );
             $this->load->view('_template/header', $data);
@@ -154,25 +178,43 @@ class Kost extends CI_Controller
 
     public function update_action()
     {
-        $this->_rules();
+        $id = $this->input->post('id', TRUE);
+        $row = $this->Kost_model->get_by_id($id);
+        $data_foto_lama = $row->foto;
 
-        if ($this->form_validation->run() == FALSE) {
-            $this->update($this->input->post('id', TRUE));
-        } else {
-            $data = array(
-                'nama_kost' => $this->input->post('nama_kost', TRUE),
-                'pemilik' => $this->input->post('pemilik', TRUE),
-                'alamat' => $this->input->post('alamat', TRUE),
-                'hp' => $this->input->post('hp', TRUE),
-                'jenis_kost' => $this->input->post('jenis_kost', TRUE),
-                'type_kost' => $this->input->post('type_kost', TRUE),
-                'area_terdekat' => $this->input->post('area_terdekat', TRUE),
-            );
+        if ($this->input->post()) {
+            if ($this->input->post('fasilitas') == '') {
+                $this->session->set_flashdata('message', 'Fasilitas belum dipilih');
+                redirect(site_url('kost_detail'));
+            } else {
+                $data = array(
+                    'nama_kost' => $this->input->post('nama_kost', TRUE),
+                    'pemilik' => $this->input->post('pemilik', TRUE),
+                    'alamat' => $this->input->post('alamat', TRUE),
+                    'hp' => $this->input->post('hp', TRUE),
+                    'jenis_kost' => $this->input->post('jenis_kost', TRUE),
+                    'type_kost' => $this->input->post('type_kost', TRUE),
+                    'harga' => $this->input->post('harga'),
+                    'fasilitas' => implode(',', $this->input->post('fasilitas')),
+                    'area_terdekat' => $this->input->post('area_terdekat', TRUE),
+                );
+                $this->db->where('id', $id);
+                $this->db->update('kost', $data);
+                $foto_lama = explode(',', $data_foto_lama);
+                foreach ($foto_lama as $fl) {
+                    unlink('assets/img/' . $fl);
+                }
+                $gambars = $this->Upload_model->mupload_files('assets/img', '', $_FILES['foto_kost']);
+                foreach ($gambars as $gambar) {
+                    $this->db->insert('kost_foto', array('foto' => $gambar, 'kost_id' => $id));
+                }
 
-            $this->Kost_model->update($this->input->post('id', TRUE), $data);
-            $this->session->set_flashdata('message', 'Update Record Success');
-            redirect(site_url('kost'));
+                redirect(site_url('kost'));
+            }
         }
+        
+            
+        
     }
 
     public function delete($id)

@@ -41,8 +41,9 @@ CREATE TABLE `kost` (
   `hp` varchar(20) NOT NULL,
   `jenis_kost` int(11) NOT NULL,
   `type_kost` int(11) NOT NULL,
+  `harga` varchar(50) NOT NULL,
+  `fasilitas` set('Wifi','Kamar Mandi Dalam','Kipas Angin','AC','Makan Pagi','TV','Boleh Bawa Alat Masak','Listrik') NOT NULL,
   `area_terdekat` text NOT NULL,
-  `foto_unggulan` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `kost` (`jenis_kost`),
   KEY `type_kost` (`type_kost`),
@@ -50,8 +51,8 @@ CREATE TABLE `kost` (
   CONSTRAINT `kost_ibfk_1` FOREIGN KEY (`type_kost`) REFERENCES `kost_type` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO `kost` (`id`, `nama_kost`, `pemilik`, `alamat`, `hp`, `jenis_kost`, `type_kost`, `area_terdekat`, `foto_unggulan`) VALUES
-(7,	'PUTU AYU',	'azrl',	'Wonosobo',	'08888888',	3,	3,	'Alun - Alun',	'f.PNG');
+INSERT INTO `kost` (`id`, `nama_kost`, `pemilik`, `alamat`, `hp`, `jenis_kost`, `type_kost`, `harga`, `fasilitas`, `area_terdekat`) VALUES
+(8,	'PUTU AYU',	'azrl',	'Wonosobo',	'085640089448',	3,	2,	'500000',	'Wifi,Kamar Mandi Dalam,Kipas Angin',	'Alun - Alun');
 
 DROP TABLE IF EXISTS `kost_detail`;
 CREATE TABLE `kost_detail` (
@@ -70,13 +71,18 @@ CREATE TABLE `kost_detail` (
 DROP TABLE IF EXISTS `kost_foto`;
 CREATE TABLE `kost_foto` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `kost_detail_id` int(11) NOT NULL,
+  `kost_id` int(11) NOT NULL,
   `foto` text NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `kost_detail_id` (`kost_detail_id`),
-  CONSTRAINT `kost_foto_ibfk_2` FOREIGN KEY (`kost_detail_id`) REFERENCES `kost_detail` (`id`) ON DELETE CASCADE
+  KEY `kost_id` (`kost_id`),
+  CONSTRAINT `kost_foto_ibfk_1` FOREIGN KEY (`kost_id`) REFERENCES `kost` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+INSERT INTO `kost_foto` (`id`, `kost_id`, `foto`) VALUES
+(52,	8,	'wp5592381-ryougi-shiki-wallpapers.jpg'),
+(53,	8,	'7072442-(1).png'),
+(54,	8,	'wp5592381-ryougi-shiki-wallpapers-(1).jpg'),
+(55,	8,	'7072442-(1)1.png');
 
 DROP TABLE IF EXISTS `kost_type`;
 CREATE TABLE `kost_type` (
@@ -129,7 +135,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `email`, `activation_selector`, `activation_code`, `forgotten_password_selector`, `forgotten_password_code`, `forgotten_password_time`, `remember_selector`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES
-(1,	'127.0.0.1',	'administrator',	'$2y$10$1.4E9R5hlWZgHHxTZx0tK.WjPbZMUspHwoLgh8EZy7lILBvzA6JTG',	'admin@admin.com',	NULL,	'',	NULL,	NULL,	NULL,	NULL,	NULL,	1268889823,	1639019419,	1,	'Admin',	'istrator',	'ADMIN',	'0');
+(1,	'127.0.0.1',	'administrator',	'$2y$10$1.4E9R5hlWZgHHxTZx0tK.WjPbZMUspHwoLgh8EZy7lILBvzA6JTG',	'admin@admin.com',	NULL,	'',	NULL,	NULL,	NULL,	NULL,	NULL,	1268889823,	1639207164,	1,	'Admin',	'istrator',	'ADMIN',	'0');
 
 DROP TABLE IF EXISTS `users_groups`;
 CREATE TABLE `users_groups` (
@@ -148,4 +154,4 @@ INSERT INTO `users_groups` (`id`, `user_id`, `group_id`) VALUES
 (1,	1,	1),
 (2,	1,	2);
 
--- 2021-12-09 09:29:01
+-- 2021-12-11 09:29:17
