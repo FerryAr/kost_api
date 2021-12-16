@@ -18,18 +18,52 @@ class Kost extends CI_Controller
         }
     }
 
-    public function index()
+    function json_foto()
+    {
+        header('Content-Type: application/json');
+        $this->db->select('GROUP_CONCAT(kost_foto.foto) as foto');
+        $this->db->from('kost');
+        $this->db->join('kost_foto', 'kost.id = kost_foto.kost_id');
+        echo json_encode($this->db->get()->result());
+    }
+
+    public function admin()
     {
         $data = array(
             'first_name' => $this->ion_auth->user()->row()->first_name,
+            'url' => base_url('kost/json'),
         );
         if (!$this->ion_auth->logged_in()) {
             redirect('auth/login');
         } else {
-            $this->load->view('_template/header', $data);
-            $this->load->view('kost/kost_list');
-            $this->load->view('_template/footer');
+            if ($this->ion_auth->is_admin()) {
+                $this->load->view('_template/header', $data);
+                $this->load->view('kost/kost_list');
+                $this->load->view('_template/footer');
+            }
         }
+    }
+
+    public function pemilik()
+    {
+        $data = array(
+            'first_name' => $this->ion_auth->user()->row()->first_name,
+            'url' =>  base_url('kost/json_pemilik'),
+        );
+        if (!$this->ion_auth->logged_in()) {
+            redirect('auth/login');
+        } else {
+            if ($this->ion_auth->in_group('pemilik')) {
+                $this->load->view('_template/header', $data);
+                $this->load->view('kost/kost_list');
+                $this->load->view('_template/footer');
+            }
+        }
+    }
+
+    public function test()
+    {
+        print_r($this->ion_auth->user()->row());
     }
 
     public function json()
@@ -37,10 +71,12 @@ class Kost extends CI_Controller
         header('Content-Type: application/json');
         echo $this->Kost_model->json();
     }
-    public function test()
+
+    public function json_pemilik()
     {
-        $this->load->view('_template/header.php');
-        $this->load->view('_template/footer.php');
+        header('Content-Type: application/json');
+        $pemilik = $this->ion_auth->user()->row()->first_name;
+        echo $this->Kost_model->json_pemilik($pemilik);
     }
 
     public function read($id)
@@ -79,20 +115,28 @@ class Kost extends CI_Controller
     {
         $jenis_kost = $this->db->select('*')->from('jenis_kost')->get()->result();
         $type_kost = $this->db->select('*')->from('kost_type')->get()->result();
+        $fasilitas = $this->db->select('*')->from('kost_fasilitas')->get()->result();
+        if ($this->ion_auth->in_group('pemilik')) {
+            $pemilik = $this->ion_auth->user()->row()->first_name;
+        } else {
+            $pemilik = set_value('pemilik');
+        }
         $data = array(
+            'first_name' => $this->ion_auth->user()->row()->first_name,
             'button' => 'Create',
             'action' => site_url('kost/create_action'),
             'id' => set_value('id'),
             'nama_kost' => set_value('nama_kost'),
-            'pemilik' => set_value('pemilik'),
+            'pemilik' => $pemilik,
             'alamat' => set_value('alamat'),
             'hp' => set_value('hp'),
             'jenis_kost' => $jenis_kost,
             'type_kost' => $type_kost,
+            'fasilitas' => $fasilitas,
             'jenis_selected' => '',
             'type_selected' => '',
+            'fasilitas_selected' => [],
             'harga' => set_value('harga'),
-            'fasilitas' => set_value('fasilitas'),
             'area_terdekat' => set_value('area_terdekat'),
             'first_name' => $this->ion_auth->user()->row()->first_name,
         );
@@ -125,12 +169,16 @@ class Kost extends CI_Controller
                     'jenis_kost' => $this->input->post('jenis_kost', TRUE),
                     'type_kost' => $this->input->post('type_kost', TRUE),
                     'harga' => $this->input->post('harga'),
-                    'fasilitas' => implode(',', $this->input->post('fasilitas')),
                     'area_terdekat' => $this->input->post('area_terdekat', TRUE),
                 );
                 $this->Kost_model->insert($data);
                 $gambars = $this->Upload_model->mupload_files('assets/img', '', $_FILES['foto_kost']);
                 $id = $this->db->insert_id();
+
+                $fasilitas = $this->input->post('fasilitas');
+                foreach ($fasilitas as $f) {
+                    $this->db->insert('fasilitas_kost', array('kost_id' => $id, 'fasilitas_id' => $f));
+                }
 
                 foreach ($gambars as $gambar) {
                     $this->db->insert('kost_foto', array('foto' => $gambar, 'kost_id' => $id));
@@ -139,7 +187,6 @@ class Kost extends CI_Controller
                 $this->session->set_flashdata('message', 'Create Record Success');
                 redirect(site_url('kost'));
             }
-            
         } else {
         }
     }
@@ -149,8 +196,10 @@ class Kost extends CI_Controller
         $row = $this->Kost_model->get_by_id($id);
         $jenis_kost = $this->db->select('*')->from('jenis_kost')->get()->result();
         $type_kost = $this->db->select('*')->from('kost_type')->get()->result();
+        $fasilitas = $this->db->select('*')->from('kost_fasilitas')->get()->result();
         if ($row) {
             $data = array(
+                'first_name' => $this->ion_auth->user()->row()->first_name,
                 'button' => 'Update',
                 'action' => site_url('kost/update_action'),
                 'id' => set_value('id', $row->id),
@@ -163,7 +212,8 @@ class Kost extends CI_Controller
                 'jenis_selected' => $row->jenis_kost,
                 'type_selected' => $row->type_kost,
                 'harga' => set_value('harga', $row->harga),
-                'fasilitas' => set_value('fasilitas', $row->fasilitas),
+                'fasilitas_selected' => [],
+                'fasilitas' => $fasilitas,
                 'foto' => $row->foto,
                 'area_terdekat' => set_value('area_terdekat', $row->area_terdekat),
             );
@@ -200,21 +250,35 @@ class Kost extends CI_Controller
                 );
                 $this->db->where('id', $id);
                 $this->db->update('kost', $data);
-                $foto_lama = explode(',', $data_foto_lama);
-                foreach ($foto_lama as $fl) {
-                    unlink('assets/img/' . $fl);
+
+
+                $fasilitas = $this->input->post('fasilitas');
+                $this->db->where('kost_id', $id);
+                $this->db->delete('fasilitas_kost');
+
+
+                foreach ($fasilitas as $f) {
+                    $this->db->insert('fasilitas_kost', array('kost_id' => $id, 'fasilitas_id' => $f));
                 }
-                $gambars = $this->Upload_model->mupload_files('assets/img', '', $_FILES['foto_kost']);
-                foreach ($gambars as $gambar) {
-                    $this->db->insert('kost_foto', array('foto' => $gambar, 'kost_id' => $id));
+
+                if (isset($_FILES['foto_kost']['name']) && $_FILES['foto_kost']['name'] != '') {
+                    $foto_lama = explode(',', $data_foto_lama);
+                    foreach ($foto_lama as $fl) {
+                        $this->db->where('foto', $fl);
+                        $this->db->delete('kost_foto');
+                        unlink('assets/img/' . $fl);
+                    }
+                    $gambars = $this->Upload_model->mupload_files('assets/img', '', $_FILES['foto_kost']);
+                    foreach ($gambars as $gambar) {
+                        $this->db->insert('kost_foto', array('foto' => $gambar, 'kost_id' => $id));
+                    }
                 }
+
+
 
                 redirect(site_url('kost'));
             }
         }
-        
-            
-        
     }
 
     public function delete($id)

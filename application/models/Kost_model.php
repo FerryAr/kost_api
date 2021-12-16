@@ -13,6 +13,7 @@ class Kost_model extends CI_Model
     function __construct()
     {
         parent::__construct();
+        $this->load->library('ion_auth');
     }
 
     // datatables
@@ -28,13 +29,42 @@ class Kost_model extends CI_Model
     // }
 
     function json() {
-        $this->datatables->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.fasilitas, kost.area_terdekat');
+        $this->datatables->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat');
         $this->datatables->from('kost');
         $this->datatables->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id');
         $this->datatables->join('kost_type', 'kost.type_kost = kost_type.id');
+        $this->datatables->join('fasilitas_kost', 'kost.id=fasilitas_kost.kost_id');
+        $this->datatables->join('kost_fasilitas', 'fasilitas_kost.fasilitas_id=kost_fasilitas.id');
         $this->datatables->join('kost_foto', 'kost.id=kost_foto.kost_id');
+        $this->datatables->group_by('kost.id');
+        //$this->datatables->group_by('fasilitas_kost.kost_id');
         $this->datatables->add_column('action', anchor(site_url('kost/read/$1'),'Read')." | ".anchor(site_url('kost/update/$1'),'Update')." | ".anchor(site_url('kost/delete/$1'),'Delete','onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'id');
         return $this->datatables->generate();
+    }
+
+    function json_pemilik($pemilik) {
+        $this->datatables->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat');
+        $this->datatables->from('kost');
+        $this->datatables->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id');
+        $this->datatables->join('kost_type', 'kost.type_kost = kost_type.id');
+        $this->datatables->join('fasilitas_kost', 'kost.id=fasilitas_kost.kost_id');
+        $this->datatables->join('kost_fasilitas', 'fasilitas_kost.fasilitas_id=kost_fasilitas.id');
+        $this->datatables->join('kost_foto', 'kost.id=kost_foto.kost_id');
+        $this->datatables->where('kost.pemilik', $pemilik);
+        $this->datatables->group_by('kost.id');
+        //$this->datatables->group_by('fasilitas_kost.kost_id');
+        $this->datatables->add_column('action', anchor(site_url('kost/read/$1'),'Read')." | ".anchor(site_url('kost/update/$1'),'Update')." | ".anchor(site_url('kost/delete/$1'),'Delete','onclick="javasciprt: return confirm(\'Are You Sure ?\')"'), 'id');
+        return $this->datatables->generate();
+    }
+
+    function test() {
+        $this->db->select('kost_fasilitas.fasilitas');
+        $this->db->from('kost');
+        $this->db->join('fasilitas_kost', 'kost.id=fasilitas_kost.kost_id');
+        $this->db->join('kost_fasilitas', 'fasilitas_kost.fasilitas_id=kost_fasilitas.id');
+        $this->db->group_by('kost.id');
+        return $this->db->get()->result();
+
     }
 
     // get all
@@ -47,7 +77,7 @@ class Kost_model extends CI_Model
     // get data by id
     function get_by_id($id)
     {
-        $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp, kost.jenis_kost, kost.type_kost, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.fasilitas, kost.area_terdekat')
+        $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp, kost.jenis_kost, kost.type_kost, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
             ->from('kost')
             ->join('kost_foto', 'kost.id=kost_foto.kost_id')
             ->where('kost.id', $id)
