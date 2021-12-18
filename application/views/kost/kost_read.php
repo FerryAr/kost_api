@@ -44,7 +44,7 @@
                 <td><?php echo $area_terdekat; ?></td>
             </tr>
         </table>
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
             <h2 style="margin-top:0px">Detail Kost</h2>
         </div>
         <table class="table table-striped" style="margin-top:1rem">
@@ -60,30 +60,30 @@
             </thead>
             <tbody>
                 <?php
-                $no = 1;
-                foreach ($detail_kost as $k) {
+                // $no = 1;
+                // foreach ($detail_kost as $k) {
                 ?>
                     <tr>
-                        <td><?php echo $no++ ?></td>
-                        <td><?php echo $k->nama_kamar ?></td>
-                        <td><?php echo $k->deskripsi_kamar ?></td>
-                        <td><?php echo $k->harga ?></td>
-                        <td><?php echo $k->fasilitas ?></td>
-                        <!-- <td><img src="<?php echo base_url('assets/img/kamar/' . $k->foto) ?>" width="100" height="100"></td> -->
+                        <td><?php //echo $no++ ?></td>
+                        <td><?php //echo $k->nama_kamar ?></td>
+                        <td><?php //echo $k->deskripsi_kamar ?></td>
+                        <td><?php //echo $k->harga ?></td>
+                        <td><?php //echo $k->fasilitas ?></td>
+                        <!-- <td><img src="<?php //echo base_url('assets/img/kamar/' . $k->foto) ?>" width="100" height="100"></td> -->
                         <td>
                             <?php
-                            $data_foto = $k->foto;
-                            $foto = explode(",", $data_foto);
-                            foreach ($foto as $f) {
+                            //$data_foto = $k->foto;
+                            //$foto = explode(",", $data_foto);
+                            //foreach ($foto as $f) {
                             ?>
-                                <img src="<?php echo base_url('assets/img/' . $f) ?>" style="margin-top:2rem; margin-bottom:2rem">
-                            <?php } ?>
+                                <!-- <img src="<?php //echo base_url('assets/img/' . $f) ?>" style="margin-top:2rem; margin-bottom:2rem">
+                            <?php //} ?> -->
                         </td>
                     </tr>
                 <?php
-                }
+                //}
                 ?>
-        </table>
+        <!-- </table> --> -->
         <a href="<?php echo site_url('kost') ?>" class="btn btn-secondary">Kembali</a>
     </div>
 

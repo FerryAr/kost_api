@@ -63,41 +63,19 @@
                             </div>
                         <?php } ?>
                     </div>
-                    <!-- <div class="form-group">
-                                <label>Fasilitas</label><br>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="fasilitas[]" value="Wifi">
-                                    <label class="form-check-label">Wifi</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="fasilitas[]" value="Kamar Mandi Dalam">
-                                    <label class="form-check-label">Kamar Mandi Dalam</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="fasilitas[]" value="Kipas Angin">
-                                    <label class="form-check-label">Kipas Angin</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="fasilitas[]" value="AC">
-                                    <label class="form-check-label">AC</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="fasilitas[]" value="Makan Pagi">
-                                    <label class="form-check-label">Makan Pagi</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="fasilitas[]" value="TV">
-                                    <label class="form-check-label">TV</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="fasilitas[]" value="Boleh Bawa Alat Masak">
-                                    <label class="form-check-label">Boleh Bawa Alat Masak</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="fasilitas[]" value="Listrik">
-                                    <label class="form-check-label">Listrik</label>
-                                </div>
-                            </div> -->
+                    <div class="form-group">
+                        <label>Operator</label>
+
+                        <select class="form-control" name="operator" id="operator">
+                            <option selected disabled>Pilih Operator</option>
+                            <?php foreach ($operator as $o) : ?>
+                                <option value="<?php echo $o->id ?>" <?php if ($o->id == $operator_selected) {
+                                                                            echo 'selected';
+                                                                        } ?>><?php echo $o->first_name ?></option>
+                            <?php endforeach; ?>
+                        </select>
+
+                    </div>
                     <div class="form-group">
                         <label for="area_terdekat">Area Terdekat <?php echo form_error('area_terdekat') ?></label>
                         <textarea class="form-control" rows="3" name="area_terdekat" id="area_terdekat" placeholder="Area Terdekat"><?php echo $area_terdekat; ?></textarea>

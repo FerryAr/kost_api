@@ -61,11 +61,6 @@ class Kost extends CI_Controller
         }
     }
 
-    public function test()
-    {
-        print_r($this->ion_auth->user()->row());
-    }
-
     public function json()
     {
         header('Content-Type: application/json');
@@ -116,6 +111,7 @@ class Kost extends CI_Controller
         $jenis_kost = $this->db->select('*')->from('jenis_kost')->get()->result();
         $type_kost = $this->db->select('*')->from('kost_type')->get()->result();
         $fasilitas = $this->db->select('*')->from('kost_fasilitas')->get()->result();
+        $operator = $this->db->select('users.id, users.first_name')->from('users')->join('users_groups', 'users.id = users_groups.user_id')->where('users_groups.group_id', '4')->get()->result();
         if ($this->ion_auth->in_group('pemilik')) {
             $pemilik = $this->ion_auth->user()->row()->first_name;
         } else {
@@ -133,9 +129,11 @@ class Kost extends CI_Controller
             'jenis_kost' => $jenis_kost,
             'type_kost' => $type_kost,
             'fasilitas' => $fasilitas,
+            'operator' => $operator,
             'jenis_selected' => '',
             'type_selected' => '',
             'fasilitas_selected' => [],
+            'operator_selected' => '',
             'harga' => set_value('harga'),
             'area_terdekat' => set_value('area_terdekat'),
             'first_name' => $this->ion_auth->user()->row()->first_name,
@@ -150,16 +148,9 @@ class Kost extends CI_Controller
         // $this->_rules();
 
         if ($this->input->post()) {
-            $config['upload_path']          = realpath(APPPATH . '../assets/img');
-            $config['allowed_types']        = 'gif|jpg|png';
-            $config['max_size']             = 100;
-            $config['max_width']            = 1024;
-            $config['max_height']           = 768;
-            $this->load->library('upload', $config);
-
             if ($this->input->post('fasilitas') == '') {
                 $this->session->set_flashdata('message', 'Fasilitas belum dipilih');
-                redirect(site_url('kost_detail'));
+                redirect(site_url('kost'));
             } else {
                 $data = array(
                     'nama_kost' => $this->input->post('nama_kost', TRUE),
@@ -172,7 +163,7 @@ class Kost extends CI_Controller
                     'area_terdekat' => $this->input->post('area_terdekat', TRUE),
                 );
                 $this->Kost_model->insert($data);
-                $gambars = $this->Upload_model->mupload_files('assets/img', '', $_FILES['foto_kost']);
+                $gambars = $this->Upload_model->mupload_files('assets/img/foto_kost', '', $_FILES['foto_kost']);
                 $id = $this->db->insert_id();
 
                 $fasilitas = $this->input->post('fasilitas');
@@ -266,16 +257,13 @@ class Kost extends CI_Controller
                     foreach ($foto_lama as $fl) {
                         $this->db->where('foto', $fl);
                         $this->db->delete('kost_foto');
-                        unlink('assets/img/' . $fl);
+                        unlink(realpath(APPPATH . '../assets/img/foto_kost/' . $data_foto_lama));
                     }
-                    $gambars = $this->Upload_model->mupload_files('assets/img', '', $_FILES['foto_kost']);
+                    $gambars = $this->Upload_model->mupload_files('assets/img/foto_kost', '', $_FILES['foto_kost']);
                     foreach ($gambars as $gambar) {
                         $this->db->insert('kost_foto', array('foto' => $gambar, 'kost_id' => $id));
                     }
                 }
-
-
-
                 redirect(site_url('kost'));
             }
         }
@@ -302,6 +290,8 @@ class Kost extends CI_Controller
         $this->form_validation->set_rules('alamat', 'alamat', 'trim|required');
         $this->form_validation->set_rules('hp', 'hp', 'trim|required');
         $this->form_validation->set_rules('jenis_kost', 'jenis kost', 'trim|required');
+        $this->form_validation->set_rules('type_kost', 'type kost', 'trim|required');
+        $this->form_validation->set_rules('harga', 'harga', 'trim|required');
         $this->form_validation->set_rules('area_terdekat', 'area terdekat', 'trim|required');
 
         $this->form_validation->set_rules('id', 'id', 'trim');

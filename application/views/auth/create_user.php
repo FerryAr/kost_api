@@ -1,57 +1,144 @@
-<h1><?php echo lang('create_user_heading');?></h1>
-<p><?php echo lang('create_user_subheading');?></p>
+<!-- <h1><?php echo lang('create_user_heading'); ?></h1>
+<p><?php echo lang('create_user_subheading'); ?></p> -->
 
-<div id="infoMessage"><?php echo $message;?></div>
+<!DOCTYPE html>
+<html lang="en">
 
-<?php echo form_open("auth/create_user");?>
+<head>
 
-      <p>
-            <?php echo lang('create_user_fname_label', 'first_name');?> <br />
-            <?php echo form_input($first_name);?>
-      </p>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="">
+      <meta name="author" content="">
 
-      <p>
-            <?php echo lang('create_user_lname_label', 'last_name');?> <br />
-            <?php echo form_input($last_name);?>
-      </p>
-      
-      <?php
-      if($identity_column!=='email') {
-          echo '<p>';
-          echo lang('create_user_identity_label', 'identity');
-          echo '<br />';
-          echo form_error('identity');
-          echo form_input($identity);
-          echo '</p>';
-      }
-      ?>
+      <title>SB Admin 2 - Register</title>
 
-      <p>
-            <?php echo lang('create_user_company_label', 'company');?> <br />
-            <?php echo form_input($company);?>
-      </p>
+      <!-- Custom fonts for this template-->
+      <link href="<?= base_url('assets/vendor/fontawesome-free/css/all.min.css') ?>" rel="stylesheet" type="text/css">
+      <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
 
-      <p>
-            <?php echo lang('create_user_email_label', 'email');?> <br />
-            <?php echo form_input($email);?>
-      </p>
+      <!-- Custom styles for this template-->
+      <link href="<?= base_url('assets/sb-admin-2.min.css') ?>" rel="stylesheet">
 
-      <p>
-            <?php echo lang('create_user_phone_label', 'phone');?> <br />
-            <?php echo form_input($phone);?>
-      </p>
+      <script>
+            <?php if (isset($message)) { ?>
+                  alert('<?= $message ?>')
+            <?php } ?>
+      </script>
 
-      <p>
-            <?php echo lang('create_user_password_label', 'password');?> <br />
-            <?php echo form_input($password);?>
-      </p>
+</head>
 
-      <p>
-            <?php echo lang('create_user_password_confirm_label', 'password_confirm');?> <br />
-            <?php echo form_input($password_confirm);?>
-      </p>
+<body class="bg-gradient-primary">
 
+      <div class="container">
 
-      <p><?php echo form_submit('submit', lang('create_user_submit_btn'));?></p>
+            <div class="card o-hidden border-0 shadow-lg my-5">
+                  <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                              <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+                              <div class="col-lg-7">
+                                    <div class="p-5">
+                                          <div class="text-center">
+                                                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                                          </div>
+                                          <form class="user" method="POST" action="<?= base_url('auth/create_user') ?>" enctype="multipart/form-data">
+                                                <div class="form-group row">
+                                                      <div class="col-sm-6 mb-3 mb-sm-0">
+                                                            <?php echo lang('create_user_fname_label', 'first_name'); ?> <br />
+                                                            <?php echo form_input($first_name); ?>
+                                                      </div>
+                                                      <div class="col-sm-6 mb-3 mb-sm-0">
+                                                            <?php echo lang('create_user_lname_label', 'last_name'); ?> <br />
+                                                            <?php echo form_input($last_name); ?>
+                                                      </div>
+                                                </div>
+                                                <?php
+                                                if ($identity_column !== 'email') {
+                                                      echo '<p>';
+                                                      echo lang('create_user_identity_label', 'identity');
+                                                      echo '<br />';
+                                                      echo form_error('identity');
+                                                      echo form_input($identity);
+                                                      echo '</p>';
+                                                }
+                                                ?>
 
-<?php echo form_close();?>
+                                                <div class="form-group">
+                                                      <?php echo lang('create_user_alamat_label', 'alamat'); ?> <br />
+                                                      <?php echo form_input($alamat); ?>
+                                                </div>
+
+                                                <div class="form-group">
+                                                      <?php echo lang('create_user_email_label', 'email'); ?> <br />
+                                                      <?php echo form_input($email); ?>
+                                                </div>
+
+                                                <div class="form-group">
+                                                      <?php echo lang('create_user_nowa_label', 'no_wa'); ?> <br />
+                                                      <?php echo form_input($no_wa); ?>
+                                                </div>
+
+                                                <?php
+                                                if ($this->ion_auth->is_admin()) :
+                                                ?>
+                                                      <div class="form-group">
+                                                            <label>Group:</label>
+                                                            <select name="group" class="form-control">
+                                                                  <option disabled selected>Pilih Group</option>
+                                                                  <?php foreach ($group_list as $group) : ?>
+                                                                        <option value="<?= $group->id ?>"><?= $group->name ?></option>
+                                                                  <?php endforeach ?>
+                                                            </select>
+                                                      </div>
+                                                <?php
+                                                endif;
+                                                ?>
+
+                                                <div class="form-group">
+                                                      <?php
+                                                      $avatar['class'] = 'form-control';
+                                                      echo lang('create_user_avatar_label', 'avatar');
+                                                      ?>
+                                                      <input type="file" class="form-control" name="userfile" id="avatar" size="20" required>
+                                                </div>
+
+                                                <div class="form-group row">
+                                                      <div class="col-sm-6 mb-3 mb-sm-0">
+                                                            <?php echo lang('create_user_password_label', 'password'); ?> <br />
+                                                            <?php echo form_input($password); ?>
+                                                      </div>
+
+                                                      <div class="col-sm-6">
+                                                            <?php echo lang('create_user_password_confirm_label', 'password_confirm'); ?> <br />
+                                                            <?php echo form_input($password_confirm); ?>
+                                                      </div>
+                                                </div>
+                                                <input type="submit" class="btn btn-primary btn-user btn-block" value="Register">
+
+                                                <?php echo form_close(); ?>
+                                                <hr>
+                                                <div class="text-center">
+                                                      <a class="small" href="<?= base_url('auth/login') ?>">Already have an account? Login!</a>
+                                                </div>
+                                    </div>
+                              </div>
+                        </div>
+                  </div>
+            </div>
+
+      </div>
+      <!-- Bootstrap core JavaScript-->
+      <script src="<?= base_url('assets/vendor/jquery/jquery.min.js') ?>"></script>
+      <script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
+
+      <!-- Core plugin JavaScript-->
+      <script src="<?= base_url('assets/vendor/jquery-easing/jquery.easing.min.js') ?>"></script>
+
+      <!-- Custom scripts for all pages-->
+      <script src="<?= base_url('assets/js/sb-admin-2.min.js') ?>"></script>
+
+</body>
+
+</html>

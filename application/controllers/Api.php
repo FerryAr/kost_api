@@ -271,6 +271,28 @@ class Api extends CI_Controller
             $this->output->set_status_header(403);
         }
     }
+
+    public function get_slider()
+    {
+        if ($this->input->post('apiKey') == $this->apiKey) {
+            $query = $this->db->select('GROUP_CONCAT(carousel_iklan.foto_iklan) AS foto_iklan')
+                ->from('carousel_iklan')
+                ->order_by('level', 'asc')
+                ->get()
+                ->row();
+            header('Content-Type: application/json');
+            echo json_encode(
+                [
+                    'status' => 'success',
+                    'data' => array(
+                        'foto_iklan' => explode(',', $query->foto_iklan)
+                    )
+                ]
+            );
+        } else {
+            $this->output->set_status_header(403);
+        }
+    }
 }
 
 /* End of file Api.php and path /application/controllers/Api.php */

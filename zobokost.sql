@@ -11,6 +11,20 @@ DROP DATABASE IF EXISTS `zobokost`;
 CREATE DATABASE `zobokost` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 USE `zobokost`;
 
+DROP TABLE IF EXISTS `carousel_iklan`;
+CREATE TABLE `carousel_iklan` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `foto_iklan` text NOT NULL,
+  `level` int(11) NOT NULL,
+  `keterangan` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+TRUNCATE `carousel_iklan`;
+INSERT INTO `carousel_iklan` (`id`, `foto_iklan`, `level`, `keterangan`) VALUES
+(1,	'Promo-Tangguh-Bersama-Homebanner-Banner-Promo.png',	1,	'promo 1'),
+(2,	'Homebanner-Promo-Page-TOKENSINGGAH.png',	2,	'promo 2');
+
 DROP TABLE IF EXISTS `fasilitas_kost`;
 CREATE TABLE `fasilitas_kost` (
   `kost_id` int(11) NOT NULL,
@@ -47,7 +61,8 @@ TRUNCATE `groups`;
 INSERT INTO `groups` (`id`, `name`, `description`) VALUES
 (1,	'admin',	'Administrator'),
 (2,	'members',	'General User'),
-(3,	'pemilik',	'Pemiilik Kost');
+(3,	'pemilik',	'Pemiilik Kost'),
+(4,	'operator',	'operator kost');
 
 DROP TABLE IF EXISTS `jenis_kost`;
 CREATE TABLE `jenis_kost` (
@@ -165,6 +180,19 @@ CREATE TABLE `login_attempts` (
 
 TRUNCATE `login_attempts`;
 
+DROP TABLE IF EXISTS `profil`;
+CREATE TABLE `profil` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nama` varchar(50) NOT NULL,
+  `alamat` text NOT NULL,
+  `no_wa` text NOT NULL,
+  `avatar` text NOT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+TRUNCATE `profil`;
+
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -182,10 +210,11 @@ CREATE TABLE `users` (
   `created_on` int(11) unsigned NOT NULL,
   `last_login` int(11) unsigned DEFAULT NULL,
   `active` tinyint(1) unsigned DEFAULT NULL,
-  `first_name` varchar(50) DEFAULT NULL,
+  `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) DEFAULT NULL,
-  `company` varchar(100) DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL,
+  `alamat` varchar(100) NOT NULL,
+  `no_wa` varchar(20) NOT NULL,
+  `avatar` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uc_email` (`email`),
   UNIQUE KEY `uc_activation_selector` (`activation_selector`),
@@ -194,9 +223,10 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 TRUNCATE `users`;
-INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `email`, `activation_selector`, `activation_code`, `forgotten_password_selector`, `forgotten_password_code`, `forgotten_password_time`, `remember_selector`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `company`, `phone`) VALUES
-(1,	'127.0.0.1',	'administrator',	'$2y$10$1.4E9R5hlWZgHHxTZx0tK.WjPbZMUspHwoLgh8EZy7lILBvzA6JTG',	'admin@admin.com',	NULL,	'',	NULL,	NULL,	NULL,	NULL,	NULL,	1268889823,	1639543523,	1,	'Admin',	'istrator',	'ADMIN',	'0'),
-(2,	'127.0.0.1',	NULL,	'$2y$10$x/HrDKHGgz7CB.cnlzWKPOrcMoB06vdEG.QBGMQ5PyeGXgsyUasle',	'ferryakbarardiansyah@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639465829,	1639533314,	1,	'azrl',	'akbr',	'a',	'(+62) 81228679721');
+INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `email`, `activation_selector`, `activation_code`, `forgotten_password_selector`, `forgotten_password_code`, `forgotten_password_time`, `remember_selector`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `alamat`, `no_wa`, `avatar`) VALUES
+(1,	'127.0.0.1',	'administrator',	'$2y$10$1.4E9R5hlWZgHHxTZx0tK.WjPbZMUspHwoLgh8EZy7lILBvzA6JTG',	'admin@admin.com',	NULL,	'',	NULL,	NULL,	NULL,	NULL,	NULL,	1268889823,	1639810797,	1,	'Admin',	'istrator',	'ADMIN',	'0',	''),
+(2,	'127.0.0.1',	NULL,	'$2y$10$x/HrDKHGgz7CB.cnlzWKPOrcMoB06vdEG.QBGMQ5PyeGXgsyUasle',	'ferryakbarardiansyah@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639465829,	1639533314,	1,	'azrl',	'akbr',	'a',	'(+62) 81228679721',	''),
+(3,	'127.0.0.1',	NULL,	'$2y$10$4vnM.dvP4e1rPlailrdFIuNSKp/2HkN3iFjV3n.vQyNLlt39TSIze',	'ferryar789@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639813861,	NULL,	1,	'Akbar',	'',	'Wonosobo',	'+6285640089448',	'76776556_1404306159736687_6385862615276453888_n1.j');
 
 DROP TABLE IF EXISTS `users_groups`;
 CREATE TABLE `users_groups` (
@@ -216,6 +246,7 @@ INSERT INTO `users_groups` (`id`, `user_id`, `group_id`) VALUES
 (1,	1,	1),
 (2,	1,	2),
 (4,	2,	2),
-(5,	2,	3);
+(5,	2,	3),
+(6,	3,	4);
 
--- 2021-12-16 06:56:55
+-- 2021-12-18 08:52:07
