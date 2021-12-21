@@ -2,7 +2,7 @@
 <div class="container-fluid">
     <div class="row" style="margin-bottom: 10px">
         <div class="col-md-4">
-            <h2 style="margin-top:0px">Kost Read</h2>
+            <h2 style="margin-top:0px">Kost <?php echo $button ?></h2>
         </div>
         <div class="card" style="width:100%; height:100%">
             <div class="card-body">
@@ -63,19 +63,26 @@
                             </div>
                         <?php } ?>
                     </div>
-                    <div class="form-group">
-                        <label>Operator</label>
+                    <?php if ($this->ion_auth->is_admin() || $this->ion_auth->in_group('pemilik')) { ?>
+                        <div class="form-group">
+                            <label>Operator</label>
 
-                        <select class="form-control" name="operator" id="operator">
-                            <option selected disabled>Pilih Operator</option>
-                            <?php foreach ($operator as $o) : ?>
-                                <option value="<?php echo $o->id ?>" <?php if ($o->id == $operator_selected) {
-                                                                            echo 'selected';
-                                                                        } ?>><?php echo $o->first_name ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                            <select class="form-control" name="operator" id="operator">
+                                <option selected disabled>Pilih Operator</option>
+                                <?php foreach ($operator as $o) : ?>
+                                    <option value="<?php echo $o->id ?>" <?php if ($o->id == $operator_selected) {
+                                                                                echo 'selected';
+                                                                            } ?>><?php echo $o->first_name ?></option>
+                                <?php endforeach; ?>
+                            </select>
 
-                    </div>
+                        </div>
+                    <?php } else { ?>
+                        <div class="form-group">
+                            <label>Operator</label>
+                            <input type="text" class="form-control" name="operator" id="operator" placeholder="Operator" value="<?php echo $this->ion_auth->user()->row()->first_name ?>" disabled />
+                        </div>
+                    <?php } ?>
                     <div class="form-group">
                         <label for="area_terdekat">Area Terdekat <?php echo form_error('area_terdekat') ?></label>
                         <textarea class="form-control" rows="3" name="area_terdekat" id="area_terdekat" placeholder="Area Terdekat"><?php echo $area_terdekat; ?></textarea>
@@ -84,34 +91,34 @@
                         <label for="foto_kamar">Foto Kamar</label>
                         <div class="row">
                             <div class="col-md-3">
-                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kamar" />
+                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kost" />
                             </div>
                             <div class="col-md-3">
-                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kamar" />
+                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kost" />
                             </div>
                             <div class="col-md-3">
-                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kamar" />
+                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kost" />
                             </div>
                             <div class="col-md-3">
-                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kamar" />
+                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kost" />
                             </div>
                             <div class="col-md-3">
-                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kamar" />
+                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kost" />
                             </div>
                             <div class="col-md-3">
-                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kamar" />
+                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kost" />
                             </div>
                             <div class="col-md-3">
-                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kamar" />
+                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kost" />
                             </div>
                             <div class="col-md-3">
-                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kamar" />
+                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kost" />
                             </div>
                             <div class="col-md-3">
-                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kamar" />
+                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kost" />
                             </div>
                             <div class="col-md-3">
-                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kamar" />
+                                <input type="file" class="form-control dropify" name="foto_kost[]" id="foto_kost" />
                             </div>
                         </div>
 

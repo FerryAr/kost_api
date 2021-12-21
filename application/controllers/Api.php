@@ -50,11 +50,12 @@ class Api extends CI_Controller
                 $this->output->set_status_header(400);
             } else {
                 $id = $this->input->post('id');
-                $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, users.first_name, users.avatar,  users.no_wa, users.last_logout, users.login_status ,kost.area_terdekat')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
                     ->join('kost_foto', 'kost.id = kost_foto.kost_id')
+                    ->join('users', 'kost.operator=users.id')
                     ->where('kost.id', $id)
                     ->get()
                     ->row();
@@ -68,9 +69,13 @@ class Api extends CI_Controller
                             'nama_kost' => $query->nama_kost,
                             'pemilik' => $query->pemilik,
                             'alamat' => $query->alamat,
-                            'no_hp' => $query->no_hp,
+                            'no_hp' => $query->no_wa,
                             'jenis_id' => $query->jenis_kost,
                             'jenis' => $query->jenis,
+                            'operator' => $query->first_name,
+                            'operator_last_logout' => $query->last_logout,
+                            'operator_login_status' => $query->login_status,
+                            'operator_avatar' => $query->avatar,
                             'type' => $query->type,
                             'harga' => $query->harga,
                             'foto' => $foto,
@@ -131,7 +136,7 @@ class Api extends CI_Controller
         $arr = [];
         if ($this->input->post('apiKey') == $this->apiKey) {
             $id_kost = $this->input->post('id_kost');
-            $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+            $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, users.first_name, kost.area_terdekat')
                 ->from('kost_detail')
                 ->join('kost_foto', 'kost_detail.id = kost_foto.kost_detail_id')
                 ->where('kost_detail.id_kost', $id_kost)

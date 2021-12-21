@@ -37,17 +37,16 @@ CREATE TABLE `fasilitas_kost` (
 
 TRUNCATE `fasilitas_kost`;
 INSERT INTO `fasilitas_kost` (`kost_id`, `fasilitas_id`) VALUES
-(8,	1),
-(8,	2),
-(8,	3),
-(12,	1),
-(12,	2),
-(12,	3),
-(13,	1),
-(13,	2),
-(13,	3),
-(13,	4),
-(13,	5);
+(21,	1),
+(21,	2),
+(22,	1),
+(22,	2),
+(22,	3),
+(22,	4),
+(22,	5),
+(22,	6),
+(22,	7),
+(22,	8);
 
 DROP TABLE IF EXISTS `groups`;
 CREATE TABLE `groups` (
@@ -89,18 +88,20 @@ CREATE TABLE `kost` (
   `type_kost` int(11) NOT NULL,
   `harga` varchar(50) NOT NULL,
   `area_terdekat` text NOT NULL,
+  `operator` int(11) unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `kost` (`jenis_kost`),
   KEY `type_kost` (`type_kost`),
+  KEY `operator` (`operator`),
   CONSTRAINT `kost` FOREIGN KEY (`jenis_kost`) REFERENCES `jenis_kost` (`id`),
-  CONSTRAINT `kost_ibfk_1` FOREIGN KEY (`type_kost`) REFERENCES `kost_type` (`id`)
+  CONSTRAINT `kost_ibfk_1` FOREIGN KEY (`type_kost`) REFERENCES `kost_type` (`id`),
+  CONSTRAINT `kost_ibfk_2` FOREIGN KEY (`operator`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 TRUNCATE `kost`;
-INSERT INTO `kost` (`id`, `nama_kost`, `pemilik`, `alamat`, `hp`, `jenis_kost`, `type_kost`, `harga`, `area_terdekat`) VALUES
-(8,	'PUTU AYU',	'azrl',	'Wonosobo',	'085640089448',	3,	2,	'500000',	'Alun - Alun'),
-(12,	'A',	'A',	'Wonosobo',	'08888888',	3,	1,	'10000',	'alun alun'),
-(13,	'Darmo Utomo',	'azrl',	'Wonosobo',	'08888888',	3,	2,	'10000',	'taman selomanik');
+INSERT INTO `kost` (`id`, `nama_kost`, `pemilik`, `alamat`, `hp`, `jenis_kost`, `type_kost`, `harga`, `area_terdekat`, `operator`) VALUES
+(21,	'A',	'azrl',	'Wonosobo',	'08888888',	3,	3,	'10000',	'dffff',	3),
+(22,	'PUTU AYU',	'azrl',	'Wonosobo',	'08888888',	3,	2,	'1100000',	'Alun - ALun',	3);
 
 DROP TABLE IF EXISTS `kost_detail`;
 CREATE TABLE `kost_detail` (
@@ -148,13 +149,10 @@ CREATE TABLE `kost_foto` (
 
 TRUNCATE `kost_foto`;
 INSERT INTO `kost_foto` (`id`, `kost_id`, `foto`) VALUES
-(52,	8,	'wp5592381-ryougi-shiki-wallpapers.jpg'),
-(53,	8,	'7072442-(1).png'),
-(54,	8,	'wp5592381-ryougi-shiki-wallpapers-(1).jpg'),
-(55,	8,	'7072442-(1)1.png'),
-(60,	12,	'capture.png'),
-(61,	12,	'a2.png'),
-(62,	13,	'mboh25.png');
+(94,	21,	'a1.png'),
+(95,	21,	'mboh1.png'),
+(96,	22,	'promo-tangguh-bersama-homebanner-banner-promo-1.png'),
+(97,	22,	'promo-tangguh-bersama-homebanner-banner-promo.png');
 
 DROP TABLE IF EXISTS `kost_type`;
 CREATE TABLE `kost_type` (
@@ -214,7 +212,9 @@ CREATE TABLE `users` (
   `last_name` varchar(50) DEFAULT NULL,
   `alamat` varchar(100) NOT NULL,
   `no_wa` varchar(20) NOT NULL,
-  `avatar` varchar(50) NOT NULL,
+  `avatar` text NOT NULL,
+  `login_status` tinyint(1) DEFAULT NULL,
+  `last_logout` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `uc_email` (`email`),
   UNIQUE KEY `uc_activation_selector` (`activation_selector`),
@@ -223,10 +223,10 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 TRUNCATE `users`;
-INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `email`, `activation_selector`, `activation_code`, `forgotten_password_selector`, `forgotten_password_code`, `forgotten_password_time`, `remember_selector`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `alamat`, `no_wa`, `avatar`) VALUES
-(1,	'127.0.0.1',	'administrator',	'$2y$10$1.4E9R5hlWZgHHxTZx0tK.WjPbZMUspHwoLgh8EZy7lILBvzA6JTG',	'admin@admin.com',	NULL,	'',	NULL,	NULL,	NULL,	NULL,	NULL,	1268889823,	1639810797,	1,	'Admin',	'istrator',	'ADMIN',	'0',	''),
-(2,	'127.0.0.1',	NULL,	'$2y$10$x/HrDKHGgz7CB.cnlzWKPOrcMoB06vdEG.QBGMQ5PyeGXgsyUasle',	'ferryakbarardiansyah@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639465829,	1639533314,	1,	'azrl',	'akbr',	'a',	'(+62) 81228679721',	''),
-(3,	'127.0.0.1',	NULL,	'$2y$10$4vnM.dvP4e1rPlailrdFIuNSKp/2HkN3iFjV3n.vQyNLlt39TSIze',	'ferryar789@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639813861,	NULL,	1,	'Akbar',	'',	'Wonosobo',	'+6285640089448',	'76776556_1404306159736687_6385862615276453888_n1.j');
+INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `email`, `activation_selector`, `activation_code`, `forgotten_password_selector`, `forgotten_password_code`, `forgotten_password_time`, `remember_selector`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `alamat`, `no_wa`, `avatar`, `login_status`, `last_logout`) VALUES
+(1,	'127.0.0.1',	'administrator',	'$2y$10$1.4E9R5hlWZgHHxTZx0tK.WjPbZMUspHwoLgh8EZy7lILBvzA6JTG',	'admin@admin.com',	NULL,	'',	NULL,	NULL,	NULL,	NULL,	NULL,	1268889823,	1639982952,	1,	'Admin',	'istrator',	'ADMIN',	'0',	'',	0,	NULL),
+(2,	'127.0.0.1',	NULL,	'$2y$10$x/HrDKHGgz7CB.cnlzWKPOrcMoB06vdEG.QBGMQ5PyeGXgsyUasle',	'ferryakbarardiansyah@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639465829,	1639986795,	1,	'azrl',	'akbr',	'a',	'(+62) 81228679721',	'',	0,	NULL),
+(3,	'127.0.0.1',	NULL,	'$2y$10$4vnM.dvP4e1rPlailrdFIuNSKp/2HkN3iFjV3n.vQyNLlt39TSIze',	'ferryar789@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639813861,	1640073405,	1,	'Akbar',	'',	'Wonosobo',	'+6285640089448',	'76776556_1404306159736687_6385862615276453888_n1.jpg',	0,	1640073570);
 
 DROP TABLE IF EXISTS `users_groups`;
 CREATE TABLE `users_groups` (
@@ -245,8 +245,7 @@ TRUNCATE `users_groups`;
 INSERT INTO `users_groups` (`id`, `user_id`, `group_id`) VALUES
 (1,	1,	1),
 (2,	1,	2),
-(4,	2,	2),
-(5,	2,	3),
+(7,	2,	3),
 (6,	3,	4);
 
--- 2021-12-18 08:52:07
+-- 2021-12-21 09:25:10

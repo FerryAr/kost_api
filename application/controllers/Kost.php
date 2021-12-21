@@ -13,9 +13,23 @@ class Kost extends CI_Controller
         $this->load->library('form_validation');
         $this->load->library('ion_auth');
         $this->load->library('datatables');
-        if (!$this->ion_auth->logged_in()) {
-            redirect('auth/login');
-        }
+        // if (!$this->ion_auth->logged_in()) {
+        //     redirect('kost/list');
+        // }
+    }
+
+    public function list() {
+        $data = array(
+            'url' => base_url('kost/json_list'),
+        );
+        $this->load->view('_template/header', $data);
+        $this->load->view('kost/kost_list');
+        $this->load->view('_template/footer');
+    }
+
+    public function json_list() {
+        header('Content-Type: application/json');
+        echo $this->Kost_model->json_list();
     }
 
     function json_foto()
@@ -61,6 +75,23 @@ class Kost extends CI_Controller
         }
     }
 
+    public function operator()
+    {
+        $data = array(
+            'first_name' => $this->ion_auth->user()->row()->first_name,
+            'url' =>  base_url('kost/json_operator'),
+        );
+        if (!$this->ion_auth->logged_in()) {
+            redirect('auth/login');
+        } else {
+            if ($this->ion_auth->in_group('operator')) {
+                $this->load->view('_template/header', $data);
+                $this->load->view('kost/kost_list');
+                $this->load->view('_template/footer');
+            }
+        }
+    }
+
     public function json()
     {
         header('Content-Type: application/json');
@@ -72,6 +103,13 @@ class Kost extends CI_Controller
         header('Content-Type: application/json');
         $pemilik = $this->ion_auth->user()->row()->first_name;
         echo $this->Kost_model->json_pemilik($pemilik);
+    }
+
+    public function json_operator()
+    {
+        header('Content-Type: application/json');
+        $operator = $this->ion_auth->user()->row()->id;
+        echo $this->Kost_model->json_operator($operator);
     }
 
     public function read($id)
@@ -145,7 +183,6 @@ class Kost extends CI_Controller
 
     public function create_action()
     {
-        // $this->_rules();
 
         if ($this->input->post()) {
             if ($this->input->post('fasilitas') == '') {
@@ -162,8 +199,14 @@ class Kost extends CI_Controller
                     'harga' => $this->input->post('harga'),
                     'area_terdekat' => $this->input->post('area_terdekat', TRUE),
                 );
+                if ($this->ion_auth->is_admin() || $this->ion_auth->in_group('pemilik')) {
+                    $data['operator'] = $this->input->post('operator', TRUE);
+                } else {
+                    $data['operator'] = $this->ion_auth->user()->row()->id;
+                }
                 $this->Kost_model->insert($data);
-                $gambars = $this->Upload_model->mupload_files('assets/img/foto_kost', '', $_FILES['foto_kost']);
+
+                $gambars = $this->Upload_model->mupload_files(realpath(APPPATH . '../assets/img/foto_kost'), '', $_FILES['foto_kost']);
                 $id = $this->db->insert_id();
 
                 $fasilitas = $this->input->post('fasilitas');
@@ -172,13 +215,26 @@ class Kost extends CI_Controller
                 }
 
                 foreach ($gambars as $gambar) {
-                    $this->db->insert('kost_foto', array('foto' => $gambar, 'kost_id' => $id));
+                    $this->db->insert('kost_foto', array('kost_id' => $id, 'foto' => $gambar));
                 }
                 // return $this->db->error();
                 $this->session->set_flashdata('message', 'Create Record Success');
-                redirect(site_url('kost'));
+                if ($this->ion_auth->is_admin()) {
+                    redirect(site_url('kost/admin'));
+                } else if ($this->ion_auth->in_group('pemilik')) {
+                    redirect(site_url('kost/pemilik'));
+                } else if ($this->ion_auth->in_group('operator')) {
+                    redirect(site_url('kost/operator'));
+                }
             }
         } else {
+            if ($this->ion_auth->is_admin()) {
+                redirect(site_url('kost/admin'));
+            } else if ($this->ion_auth->in_group('pemilik')) {
+                redirect(site_url('kost/pemilik'));
+            } else if ($this->ion_auth->in_group('operator')) {
+                redirect(site_url('kost/operator'));
+            }
         }
     }
 
@@ -188,6 +244,8 @@ class Kost extends CI_Controller
         $jenis_kost = $this->db->select('*')->from('jenis_kost')->get()->result();
         $type_kost = $this->db->select('*')->from('kost_type')->get()->result();
         $fasilitas = $this->db->select('*')->from('kost_fasilitas')->get()->result();
+        $fasilitas_selected = $this->db->select('fasilitas_id')->from('fasilitas_kost')->where('kost_id', $id)->get()->result();
+        $operator = $this->db->select('users.id, users.first_name')->from('users')->join('users_groups', 'users.id = users_groups.user_id')->where('users_groups.group_id', '4')->get()->result();
         if ($row) {
             $data = array(
                 'first_name' => $this->ion_auth->user()->row()->first_name,
@@ -203,11 +261,15 @@ class Kost extends CI_Controller
                 'jenis_selected' => $row->jenis_kost,
                 'type_selected' => $row->type_kost,
                 'harga' => set_value('harga', $row->harga),
-                'fasilitas_selected' => [],
+                'operator' => $operator,
+                'operator_selected' => $row->operator,
                 'fasilitas' => $fasilitas,
                 'foto' => $row->foto,
                 'area_terdekat' => set_value('area_terdekat', $row->area_terdekat),
             );
+            foreach ($fasilitas_selected as $fs) {
+                $data['fasilitas_selected'][] = $fs->fasilitas_id;
+            }
             $this->load->view('_template/header', $data);
             $this->load->view('kost/kost_form');
             $this->load->view('_template/footer');
@@ -236,9 +298,13 @@ class Kost extends CI_Controller
                     'jenis_kost' => $this->input->post('jenis_kost', TRUE),
                     'type_kost' => $this->input->post('type_kost', TRUE),
                     'harga' => $this->input->post('harga'),
-                    'fasilitas' => implode(',', $this->input->post('fasilitas')),
                     'area_terdekat' => $this->input->post('area_terdekat', TRUE),
                 );
+                if ($this->ion_auth->is_admin() || $this->ion_auth->in_group('pemilik')) {
+                    $data['operator'] = $this->input->post('operator', TRUE);
+                } else {
+                    $data['operator'] = $this->ion_auth->user()->row()->id;
+                }
                 $this->db->where('id', $id);
                 $this->db->update('kost', $data);
 
@@ -252,19 +318,28 @@ class Kost extends CI_Controller
                     $this->db->insert('fasilitas_kost', array('kost_id' => $id, 'fasilitas_id' => $f));
                 }
 
-                if (isset($_FILES['foto_kost']['name']) && $_FILES['foto_kost']['name'] != '') {
-                    $foto_lama = explode(',', $data_foto_lama);
-                    foreach ($foto_lama as $fl) {
-                        $this->db->where('foto', $fl);
-                        $this->db->delete('kost_foto');
-                        unlink(realpath(APPPATH . '../assets/img/foto_kost/' . $data_foto_lama));
-                    }
-                    $gambars = $this->Upload_model->mupload_files('assets/img/foto_kost', '', $_FILES['foto_kost']);
-                    foreach ($gambars as $gambar) {
-                        $this->db->insert('kost_foto', array('foto' => $gambar, 'kost_id' => $id));
+                foreach ($_FILES['foto_kost']['name'] as $f) {
+                    if ($f != '') {
+                        $foto_lama = explode(',', $data_foto_lama);
+                        foreach ($foto_lama as $fl) {
+                            unlink(realpath(APPPATH . '../assets/img/foto_kost/' . $fl));
+                            $this->db->where('kost_id', $this->input->post('id'));
+                            $this->db->delete('kost_foto');
+                        }
+                        $gambars = $this->Upload_model->mupload_files(realpath(APPPATH . '../assets/img/foto_kost'), '', $_FILES['foto_kost']);
+                        foreach ($gambars as $gambar) {
+                            $this->db->insert('kost_foto', array('foto' => $gambar, 'kost_id' => $id));
+                        }
                     }
                 }
-                redirect(site_url('kost'));
+                $this->session->set_flashdata('message', 'Update Record Success');
+                if ($this->ion_auth->is_admin()) {
+                    redirect(site_url('kost/admin'));
+                } else if ($this->ion_auth->in_group('pemilik')) {
+                    redirect(site_url('kost/pemilik'));
+                } else if ($this->ion_auth->in_group('operator')) {
+                    redirect(site_url('kost/operator'));
+                }
             }
         }
     }
@@ -276,10 +351,22 @@ class Kost extends CI_Controller
         if ($row) {
             $this->Kost_model->delete($id);
             $this->session->set_flashdata('message', 'Delete Record Success');
-            redirect(site_url('kost'));
+            if ($this->ion_auth->is_admin()) {
+                redirect(site_url('kost/admin'));
+            } else if ($this->ion_auth->in_group('pemilik')) {
+                redirect(site_url('kost/pemilik'));
+            } else if ($this->ion_auth->in_group('operator')) {
+                redirect(site_url('kost/operator'));
+            }
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('kost'));
+            if ($this->ion_auth->is_admin()) {
+                redirect(site_url('kost/admin'));
+            } else if ($this->ion_auth->in_group('pemilik')) {
+                redirect(site_url('kost/pemilik'));
+            } else if ($this->ion_auth->in_group('operator')) {
+                redirect(site_url('kost/operator'));
+            }
         }
     }
 

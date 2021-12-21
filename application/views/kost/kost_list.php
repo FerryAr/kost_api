@@ -26,6 +26,7 @@
             <th>Jenis Kost</th>
             <th>Tipe Kost</th>
             <th>Harga</th>
+            <th>Operator</th>
             <th>Fasilitas</th>
             <th>Area Terdekat</th>
             <th>Foto</th>
@@ -110,6 +111,9 @@
                     "data": "harga"
                 },
                 {
+                    "data": "first_name"
+                },
+                {
                     "data": "fasilitas"
 
                 },
@@ -122,7 +126,7 @@
                         var foto = data.split(',');
                         var output = '';
                         for (var i = 0; i < foto.length; i++) {
-                            output += '<img class="img-responsive" src="<?php echo base_url() ?>assets/img/' + foto[i] + '" style="margin: 2rem 2rem 2rem 2rem; width: 40%; height: 40%"/>';
+                            output += '<img class="img-responsive" src="<?php echo base_url() ?>assets/img/foto_kost/' + foto[i] + '" style="margin: 2rem 2rem 2rem 2rem; width: 40%; height: 40%"/>';
                         }
                         return output;
                         //return '<img src="<?php echo base_url() ?>assets/img/'+data+'" style="width: 100%; height: 100%;" />';

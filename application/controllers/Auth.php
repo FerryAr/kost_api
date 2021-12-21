@@ -50,7 +50,9 @@ class Auth extends CI_Controller
 				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
 			}
 
+			$this->load->view('_template/header');
 			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'index', $this->data);
+			$this->load->view('_template/footer');
 		}
 	}
 
@@ -59,6 +61,21 @@ class Auth extends CI_Controller
 	 */
 	public function login()
 	{
+		if ($this->ion_auth->logged_in()) {
+			$this->db->where('id', $this->ion_auth->user()->row()->id);
+			$this->db->update('users', ['login_status' => 1, 'last_logout' => 0]);
+			if ($this->ion_auth->is_admin()) {
+				redirect('kost/admin', 'refresh');
+			} else if ($this->ion_auth->in_group('pemilik')) {
+				redirect('kost/pemilik', 'refresh');
+			} else if ($this->ion_auth->in_group('operator')) {
+				redirect('kost/operator', 'refresh');
+			} else {
+				redirect('kost/member', 'refresh');
+			}
+		} else {
+			$this->db->update('users', ['login_status' => 0]);
+		}
 		$this->data['title'] = $this->lang->line('login_heading');
 
 		// validate form input
@@ -74,10 +91,16 @@ class Auth extends CI_Controller
 				//if the login is successful
 				//redirect them back to the home page
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
+				$this->db->where('id', $this->ion_auth->user()->row()->id);
+				$this->db->update('users', ['login_status' => 1, 'last_logout' => 0]);
 				if ($this->ion_auth->is_admin()) {
 					redirect('kost/admin', 'refresh');
 				} else if ($this->ion_auth->in_group('pemilik')) {
 					redirect('kost/pemilik', 'refresh');
+				} else if ($this->ion_auth->in_group('operator')) {
+					redirect('kost/operator', 'refresh');
+				} else {
+					redirect('kost/member', 'refresh');
 				}
 			} else {
 				// if the login was un-successful
@@ -113,6 +136,8 @@ class Auth extends CI_Controller
 	public function logout()
 	{
 		$this->data['title'] = "Logout";
+		$this->db->where('id', $this->ion_auth->user()->row()->id);
+		$this->db->update('users', ['login_status' => 0, 'last_logout' => time()]);
 
 		// log the user out
 		$this->ion_auth->logout();
