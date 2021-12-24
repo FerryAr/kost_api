@@ -11,6 +11,7 @@ class Api extends CI_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('ion_auth_model');
     }
     public function get_all_kost()
     {
@@ -298,6 +299,82 @@ class Api extends CI_Controller
             $this->output->set_status_header(403);
         }
     }
+
+    public function login()
+    {
+        if ($this->input->post('apiKey') == $this->apiKey) {
+            if (empty($this->input->post('email')) || empty($this->input->post('password'))) {
+                header('Content-Type: application/json');
+                echo json_encode(
+                    [
+                        'status' => 'error',
+                        'message' => 'Email / Password tidak boleh kosong!',
+                        'data' => [],
+                    ]
+                );
+            } else {
+                $query = $this->db->select('email, first_name, no_wa, avatar, id, password, active, last_login')
+                    ->where('email', $this->input->post('email'))
+                    ->limit(1)
+                    ->order_by('id', 'desc')
+                    ->get('users');
+                if ($query->num_rows() === 1) {
+                    $user = $query->row();
+                    if ($this->ion_auth_model->verify_password($this->input->post('password'), $user->password, $this->input->post('email'))) {
+                        if ($user->active == 0) {
+                            header('Content-Type: application/json');
+                            echo json_encode(
+                                [
+                                    'status' => 'error',
+                                    'message' => 'Akun tidak aktif',
+                                    'data' => [],
+                                ]
+                            );
+                        }
+                        $this->ion_auth_model->update_last_login($user->id);
+                        $this->ion_auth_model->clear_login_attempts($this->input->post('email'));
+                        $this->ion_auth_model->clear_forgotten_password_code($this->input->post('email'));
+
+                        header('Content-Type: application/json');
+                        echo json_encode(
+                            [
+                                'status' => 'success',
+                                'message' => 'Login Sukses',
+                                'data' => [
+                                    'user_id' => $user->id,
+                                    'user_email' => $user->email,
+                                    'user_first_name' => $user->first_name,
+                                    'user_no_wa' => $user->no_wa,
+                                    'user_avatar' => $user->avatar,
+                                ],
+                            ]
+                        );
+                    } else {
+                        header('Content-Type: application/json');
+                        echo json_encode(
+                            [
+                                'status' => 'error',
+                                'message' => 'Password yang anda masukkan salah',
+                                'data' => [],
+                            ]
+                        );
+                    }
+                } else {
+                    header('Content-Type: application/json');
+                    echo json_encode(
+                        [
+                            'status' => 'error',
+                            'message' => 'Email tidak terdaftar',
+                            // 'data' => [],
+                        ]
+                    );
+                }
+            }
+        } else {
+            $this->output->set_status_header(403);
+        }
+    }
+    
 }
 
 /* End of file Api.php and path /application/controllers/Api.php */
