@@ -431,7 +431,7 @@ class Auth extends CI_Controller
 	{
 		$this->data['title'] = $this->lang->line('create_user_heading');
 
-		if (!$this->ion_auth->logged_in()) {
+		if ($this->ion_auth->logged_in()) {
 			redirect('auth', 'refresh');
 		}
 

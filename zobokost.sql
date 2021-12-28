@@ -25,6 +25,19 @@ INSERT INTO `carousel_iklan` (`id`, `foto_iklan`, `level`, `keterangan`) VALUES
 (1,	'Promo-Tangguh-Bersama-Homebanner-Banner-Promo.png',	1,	'promo 1'),
 (2,	'Homebanner-Promo-Page-TOKENSINGGAH.png',	2,	'promo 2');
 
+DROP TABLE IF EXISTS `cart`;
+CREATE TABLE `cart` (
+  `user_id` int(10) unsigned NOT NULL,
+  `kost_id` int(11) NOT NULL,
+  `created_at` int(11) NOT NULL,
+  KEY `user_id` (`user_id`),
+  KEY `kost_id` (`kost_id`),
+  CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`kost_id`) REFERENCES `kost` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+TRUNCATE `cart`;
+
 DROP TABLE IF EXISTS `fasilitas_kost`;
 CREATE TABLE `fasilitas_kost` (
   `kost_id` int(11) NOT NULL,
@@ -210,9 +223,9 @@ CREATE TABLE `users` (
   `active` tinyint(1) unsigned DEFAULT NULL,
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) DEFAULT NULL,
-  `alamat` varchar(100) NOT NULL,
-  `no_wa` varchar(20) NOT NULL,
-  `avatar` text NOT NULL,
+  `alamat` varchar(100) DEFAULT NULL,
+  `no_wa` varchar(20) DEFAULT NULL,
+  `avatar` text DEFAULT NULL,
   `login_status` tinyint(1) DEFAULT NULL,
   `last_logout` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -225,8 +238,9 @@ CREATE TABLE `users` (
 TRUNCATE `users`;
 INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `email`, `activation_selector`, `activation_code`, `forgotten_password_selector`, `forgotten_password_code`, `forgotten_password_time`, `remember_selector`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `alamat`, `no_wa`, `avatar`, `login_status`, `last_logout`) VALUES
 (1,	'127.0.0.1',	'administrator',	'$2y$10$1.4E9R5hlWZgHHxTZx0tK.WjPbZMUspHwoLgh8EZy7lILBvzA6JTG',	'admin@admin.com',	NULL,	'',	NULL,	NULL,	NULL,	NULL,	NULL,	1268889823,	1639982952,	1,	'Admin',	'istrator',	'ADMIN',	'0',	'',	0,	NULL),
-(2,	'127.0.0.1',	NULL,	'$2y$10$x/HrDKHGgz7CB.cnlzWKPOrcMoB06vdEG.QBGMQ5PyeGXgsyUasle',	'ferryakbarardiansyah@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639465829,	1639986795,	1,	'azrl',	'akbr',	'a',	'(+62) 81228679721',	'',	0,	NULL),
-(3,	'127.0.0.1',	NULL,	'$2y$10$4vnM.dvP4e1rPlailrdFIuNSKp/2HkN3iFjV3n.vQyNLlt39TSIze',	'ferryar789@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639813861,	1640073405,	1,	'Akbar',	'',	'Wonosobo',	'+6285640089448',	'76776556_1404306159736687_6385862615276453888_n1.jpg',	0,	1640073570);
+(2,	'127.0.0.1',	NULL,	'$2y$10$x/HrDKHGgz7CB.cnlzWKPOrcMoB06vdEG.QBGMQ5PyeGXgsyUasle',	'ferryakbarardiansyah@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639465829,	1640332349,	1,	'azrl',	'akbr',	'a',	'(+62) 81228679721',	'',	0,	NULL),
+(3,	'127.0.0.1',	NULL,	'$2y$10$4vnM.dvP4e1rPlailrdFIuNSKp/2HkN3iFjV3n.vQyNLlt39TSIze',	'ferryar789@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639813861,	1640584815,	1,	'Akbar',	'',	'Wonosobo',	'+6285640089448',	'76776556_1404306159736687_6385862615276453888_n1.jpg',	0,	1640586436),
+(16,	'192.168.157.126',	NULL,	'$2y$10$Ie5X59u.qjZ.ktCD5ffIteGT4pL1PH1X/6.eXfgQnMM6mxtWvao8m',	'shiinamash23@gmail.com ',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1640680716,	NULL,	1,	'Shiina',	'Mashiro',	NULL,	'0888888',	'image_picker3245271196429906581.jpg',	NULL,	NULL);
 
 DROP TABLE IF EXISTS `users_groups`;
 CREATE TABLE `users_groups` (
@@ -246,6 +260,7 @@ INSERT INTO `users_groups` (`id`, `user_id`, `group_id`) VALUES
 (1,	1,	1),
 (2,	1,	2),
 (7,	2,	3),
-(6,	3,	4);
+(6,	3,	4),
+(20,	16,	2);
 
--- 2021-12-21 09:25:10
+-- 2021-12-28 09:10:55

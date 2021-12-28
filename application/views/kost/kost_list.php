@@ -11,9 +11,11 @@
             <?php echo $this->session->userdata('message') <> '' ? $this->session->userdata('message') : ''; ?>
         </div>
     </div>
+    <?php if ($this->ion_auth->in_group(array(1,2,3))) { ?>
     <div class="col-md-4 text-right">
         <?php echo anchor(site_url('kost/create'), 'Create', 'class="btn btn-primary"'); ?>
     </div>
+    <?php } ?>
 </div>
 <table class="table table-bordered table-striped" id="mytable">
     <thead>

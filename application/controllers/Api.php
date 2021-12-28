@@ -12,6 +12,7 @@ class Api extends CI_Controller
     {
         parent::__construct();
         $this->load->model('ion_auth_model');
+        $this->load->library('ion_auth');
     }
     public function get_all_kost()
     {
@@ -51,7 +52,7 @@ class Api extends CI_Controller
                 $this->output->set_status_header(400);
             } else {
                 $id = $this->input->post('id');
-                $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, users.first_name, users.avatar,  users.no_wa, users.last_logout, users.login_status ,kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, users.first_name, users.avatar,  users.no_wa, users.last_logout, users.last_login ,kost.area_terdekat')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
@@ -74,8 +75,9 @@ class Api extends CI_Controller
                             'jenis_id' => $query->jenis_kost,
                             'jenis' => $query->jenis,
                             'operator' => $query->first_name,
+                            'operator_last_login' => $query->last_login,
                             'operator_last_logout' => $query->last_logout,
-                            'operator_login_status' => $query->login_status,
+                            //'operator_login_status' => $query->login_status,
                             'operator_avatar' => $query->avatar,
                             'type' => $query->type,
                             'harga' => $query->harga,
@@ -300,6 +302,70 @@ class Api extends CI_Controller
         }
     }
 
+    public function register()
+    {
+        if ($this->input->post('apiKey') == $this->apiKey) {
+            if (empty($this->input->post('first_name')) || empty($this->input->post('last_name')) || empty($this->input->post('email')) || empty($this->input->post('password'))) {
+                $this->output->set_status_header(400);
+            } else {
+                $config['upload_path']          = realpath(APPPATH . '../assets/img/avatars');
+                $config['file_ext_tolower']     = TRUE;
+                $config['allowed_types']        = 'gif|jpg|png';
+                // $config['max_size']             = 500;
+                // $config['max_width']            = 1024;
+                // $config['max_height']           = 768;
+                $this->load->library('upload', $config);
+
+                if (!$this->upload->do_upload('avatar')) {
+                    header('Content-Type: application/json');
+                    echo json_encode(
+                        [
+                            'status' => 'error',
+                            'message' => $this->upload->display_errors()
+                        ]
+                    );
+                } else {
+                    $file_name = $this->upload->data('file_name');
+                }
+                $additional_data = [
+                    'first_name' => $this->input->post('first_name'),
+                    'last_name' => $this->input->post('last_name'),
+                    //'alamat' => $this->input->post('alamat'),
+                    'no_wa' => $this->input->post('no_wa'),
+                    'avatar' => $file_name
+                ];
+                if ($this->ion_auth_model->identity_check($this->input->post('email'))) {
+                    echo json_encode(
+                        [
+                            'status' => 'error',
+                            'message' => 'Register gagal, email sudah digunakan'
+                        ]
+                    );
+                } else {
+                    if ($this->ion_auth->register($this->input->post('email'), $this->input->post('password'), $this->input->post('email'), $additional_data, array(2))) {
+                        header('Content-Type: application/json');
+                        echo json_encode(
+                            [
+                                'status' => 'success',
+                                'message' => 'Register berhasil, silahkan Login'
+                            ]
+                        );
+                    } else {
+                        header('Content-Type: application/json');
+                        echo json_encode(
+                            [
+                                'status' => 'error',
+                                'message' => 'Register gagal'
+                            ]
+                        );
+                    }
+                }
+            }
+        } else {
+            $this->output->set_status_header(403);
+        }
+    }
+
     public function login()
     {
         if ($this->input->post('apiKey') == $this->apiKey) {
@@ -334,6 +400,8 @@ class Api extends CI_Controller
                         $this->ion_auth_model->update_last_login($user->id);
                         $this->ion_auth_model->clear_login_attempts($this->input->post('email'));
                         $this->ion_auth_model->clear_forgotten_password_code($this->input->post('email'));
+
+                        $this->db->update('users', ['login_status' => 1, 'last_logout' => 0], ['id' => $user->id]);
 
                         header('Content-Type: application/json');
                         echo json_encode(
@@ -374,7 +442,61 @@ class Api extends CI_Controller
             $this->output->set_status_header(403);
         }
     }
-    
+    public function logout()
+    {
+        if ($this->input->post('apiKey') == $this->apiKey) {
+            if (empty($this->input->post('user_id'))) {
+                header('Content-Type: application/json');
+                echo json_encode(
+                    [
+                        'status' => 'error',
+                        'message' => 'User ID tidak boleh kosong!',
+                    ]
+                );
+            } else {
+                $this->db->update('users', ['login_status' => 0, 'last_logout' => time()], ['id' => $this->input->post('user_id')]);
+                header('Content-Type: application/json');
+                echo json_encode(
+                    [
+                        'status' => 'success',
+                        'message' => 'Logout Sukses',
+                    ]
+                );
+            }
+        } else {
+            $this->output->set_status_header(403);
+        }
+    }
+
+    public function add_cart()
+    {
+        if ($this->input->post('apiKey') == $this->apiKey) {
+            if (empty($this->input->post('user_id')) || empty($this->input->post('kost_id'))) {
+                header('Content-Type: application/json');
+                echo json_encode(
+                    [
+                        'status' => 'error',
+                        'message' => 'User ID / Kost ID tidak boleh kosong!',
+                    ]
+                );
+            } else {
+                $this->db->insert('cart', [
+                    'user_id' => $this->input->post('user_id'),
+                    'kost_id' => $this->input->post('kost_id'),
+                    'created_at' => time(),
+                ]);
+                header('Content-Type: application/json');
+                echo json_encode(
+                    [
+                        'status' => 'success',
+                        'message' => 'Kost berhasil ditambahkan ke cart',
+                    ]
+                );
+            }
+        } else {
+            $this->output->set_status_header(403);
+        }
+    }
 }
 
 /* End of file Api.php and path /application/controllers/Api.php */
