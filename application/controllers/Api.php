@@ -52,7 +52,7 @@ class Api extends CI_Controller
                 $this->output->set_status_header(400);
             } else {
                 $id = $this->input->post('id');
-                $query = $this->db->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, kost.hp, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost, kost.no_wa, operator.last_login, operator.last_logout, operator.avatar, pemilik.first_name as pemilik, kost.alamat, kost.hp, jenis_kost.id as jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
