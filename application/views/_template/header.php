@@ -66,12 +66,12 @@
             <hr class="sidebar-divider">
 
             <?php if ($this->ion_auth->is_admin()) { ?>
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Interface
-            </div>
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Interface
+                </div>
 
-            
+
                 <!-- Nav Item - Pages Collapse Menu -->
                 <li class="nav-item">
                     <a class="nav-link" href="<?= base_url('auth') ?>">
@@ -86,32 +86,44 @@
                     </div>
                 </div> -->
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url('carousel_iklan') ?>">
+                        <i class="fas fa-fw fa-sliders-h"></i>
+                        <span>Setting Iklan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url('daftar_pemilik') ?>">
+                        <i class="fas fa-fw fa-home"></i>
+                        <span>Daftar Pemilik</span>
+                    </a>
+                </li>
             <?php } ?>
             <?php if ($this->ion_auth->logged_in()) :  ?>
                 <!-- Nav Item - Utilities Collapse Menu -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
-                        <i class="fas fa-fw fa-wrench"></i>
-                        <span>Utilities</span>
-                    </a>
-                    <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Custom Utilities:</h6>
-                            <a class="collapse-item" href="utilities-color.html">Colors</a>
-                            <a class="collapse-item" href="utilities-border.html">Borders</a>
-                            <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                            <a class="collapse-item" href="utilities-other.html">Other</a>
-                        </div>
-                    </div>
-                </li>
+                <!--<li class="nav-item">-->
+                <!--    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">-->
+                <!--        <i class="fas fa-fw fa-wrench"></i>-->
+                <!--        <span>Utilities</span>-->
+                <!--    </a>-->
+                <!--    <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">-->
+                <!--        <div class="bg-white py-2 collapse-inner rounded">-->
+                <!--            <h6 class="collapse-header">Custom Utilities:</h6>-->
+                <!--            <a class="collapse-item" href="utilities-color.html">Colors</a>-->
+                <!--            <a class="collapse-item" href="utilities-border.html">Borders</a>-->
+                <!--            <a class="collapse-item" href="utilities-animation.html">Animations</a>-->
+                <!--            <a class="collapse-item" href="utilities-other.html">Other</a>-->
+                <!--        </div>-->
+                <!--    </div>-->
+                <!--</li>-->
 
                 <!-- Divider -->
-                <hr class="sidebar-divider">
+                <!--<hr class="sidebar-divider">-->
 
                 <!-- Heading -->
-                <div class="sidebar-heading">
-                    Addons
-                </div>
+                <!--<div class="sidebar-heading">-->
+                <!--    Addons-->
+                <!--</div>-->
 
                 <!-- Nav Item - Pages Collapse Menu -->
                 <!-- <li class="nav-item active">
@@ -134,21 +146,21 @@
             </li> -->
 
                 <!-- Nav Item - Charts -->
-                <li class="nav-item">
-                    <a class="nav-link" href="charts.html">
-                        <i class="fas fa-fw fa-chart-area"></i>
-                        <span>Charts</span></a>
-                </li>
+                <!--<li class="nav-item">-->
+                <!--    <a class="nav-link" href="charts.html">-->
+                <!--        <i class="fas fa-fw fa-chart-area"></i>-->
+                <!--        <span>Charts</span></a>-->
+                <!--</li>-->
 
                 <!-- Nav Item - Tables -->
-                <li class="nav-item">
-                    <a class="nav-link" href="tables.html">
-                        <i class="fas fa-fw fa-table"></i>
-                        <span>Tables</span></a>
-                </li>
+                <!--<li class="nav-item">-->
+                <!--    <a class="nav-link" href="tables.html">-->
+                <!--        <i class="fas fa-fw fa-table"></i>-->
+                <!--        <span>Tables</span></a>-->
+                <!--</li>-->
 
                 <!-- Divider -->
-                <hr class="sidebar-divider d-none d-md-block">
+                <!--<hr class="sidebar-divider d-none d-md-block">-->
 
                 <!-- Sidebar Toggler (Sidebar) -->
                 <div class="text-center d-none d-md-inline">
@@ -277,7 +289,7 @@
                                     <div class="font-weight-bold">
                                         <div class="text-truncate">Hi there! I am wondering if you can help me with a
                                             problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
+                                        <div class="small text-gray-500">Emily Fowler 路 58m</div>
                                     </div>
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
@@ -288,7 +300,7 @@
                                     <div>
                                         <div class="text-truncate">I have the photos that you ordered last month, how
                                             would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
+                                        <div class="small text-gray-500">Jae Chun 路 1d</div>
                                     </div>
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
@@ -299,7 +311,7 @@
                                     <div>
                                         <div class="text-truncate">Last month's report looks great, I am very happy with
                                             the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
+                                        <div class="small text-gray-500">Morgan Alvarez 路 2d</div>
                                     </div>
                                 </a>
                                 <a class="dropdown-item d-flex align-items-center" href="#">
@@ -310,7 +322,7 @@
                                     <div>
                                         <div class="text-truncate">Am I a good boy? The reason I ask is because someone
                                             told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
+                                        <div class="small text-gray-500">Chicken the Dog 路 2w</div>
                                     </div>
                                 </a>
                                 <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>

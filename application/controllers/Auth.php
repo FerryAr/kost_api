@@ -26,7 +26,6 @@ class Auth extends CI_Controller
 	 */
 	public function index()
 	{
-
 		if (!$this->ion_auth->logged_in()) {
 			// redirect them to the login page
 			redirect('auth/login', 'refresh');
@@ -143,7 +142,7 @@ class Auth extends CI_Controller
 		$this->ion_auth->logout();
 
 		// redirect them to the login page
-		redirect('auth/login', 'refresh');
+		redirect('/', 'refresh');
 	}
 
 	/**
@@ -424,15 +423,12 @@ class Auth extends CI_Controller
 		}
 	}
 
-	/**
-	 * Create a new user
-	 */
 	public function create_user()
 	{
 		$this->data['title'] = $this->lang->line('create_user_heading');
 
-		if ($this->ion_auth->logged_in()) {
-			redirect('auth', 'refresh');
+		if (!$this->ion_auth->is_admin()) {
+			redirect('/', 'refresh');
 		}
 
 		$tables = $this->config->item('tables', 'ion_auth');
@@ -644,7 +640,9 @@ class Auth extends CI_Controller
 					// Update the groups user belongs to
 					$this->ion_auth->remove_from_group('', $id);
 
+					
 					$groupData = $this->input->post('groups');
+					
 					if (isset($groupData) && !empty($groupData)) {
 						foreach ($groupData as $grp) {
 							$this->ion_auth->add_to_group($grp, $id);
@@ -835,6 +833,20 @@ class Auth extends CI_Controller
 		];
 
 		$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'edit_group', $this->data);
+	}
+
+	public function delete_user($id)
+	{
+		if (!$this->ion_auth->logged_in() || (!$this->ion_auth->is_admin() && !($this->ion_auth->user()->row()->id == $id))) {
+			redirect('auth', 'refresh');
+		}
+		if ($this->ion_auth_model->delete_user($id)) {
+			$this->session->set_flashdata('message', $this->ion_auth->messages());
+			redirect('auth', 'refresh');
+		} else {
+			$this->session->set_flashdata('message', $this->ion_auth->errors());
+			redirect('auth', 'refresh');
+		}
 	}
 
 	/**

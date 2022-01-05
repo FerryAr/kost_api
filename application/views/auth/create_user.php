@@ -40,8 +40,13 @@
                               <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
                               <div class="col-lg-7">
                                     <div class="p-5">
+
                                           <div class="text-center">
-                                                <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                                                <?php if (!$this->input->get('group') == '3') { ?>
+                                                      <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
+                                                <?php } else { ?>
+                                                      <h1 class="h4 text-gray-900 mb-4">Buat Pemilik</h1>
+                                                <?php } ?>
                                           </div>
                                           <form class="user" method="POST" action="<?= base_url('auth/create_user') ?>" enctype="multipart/form-data">
                                                 <div class="form-group row">
@@ -83,15 +88,24 @@
                                                 <?php
                                                 if ($this->ion_auth->is_admin()) :
                                                 ?>
-                                                      <div class="form-group">
-                                                            <label>Group:</label>
-                                                            <select name="group" class="form-control">
-                                                                  <option disabled selected>Pilih Group</option>
-                                                                  <?php foreach ($group_list as $group) : ?>
-                                                                        <option value="<?= $group->id ?>"><?= $group->name ?></option>
-                                                                  <?php endforeach ?>
-                                                            </select>
-                                                      </div>
+                                                      <?php if (!$this->input->get('group') == '3') { ?>
+                                                            <div class="form-group">
+                                                                  <label>Group:</label>
+                                                                  <select name="group" class="form-control">
+                                                                        <option disabled selected>Pilih Group</option>
+                                                                        <?php foreach ($group_list as $group) : ?>
+                                                                              <option value="<?= $group->id ?>"><?= $group->name ?></option>
+                                                                        <?php endforeach ?>
+                                                                  </select>
+                                                            </div>
+                                                      <?php } else { ?>
+                                                            <?php  ?>
+                                                            <div class="form-group">
+                                                                  <label>Group:</label>
+                                                                  <select name="group" class="form-control">
+                                                                        <option value="3" selected>Pemilik</option>
+                                                                  </select>
+                                                      <?php } ?>
                                                 <?php
                                                 endif;
                                                 ?>
@@ -118,10 +132,13 @@
                                                 <input type="submit" class="btn btn-primary btn-user btn-block" value="Register">
 
                                                 <?php echo form_close(); ?>
-                                                <hr>
-                                                <div class="text-center">
-                                                      <a class="small" href="<?= base_url('auth/login') ?>">Already have an account? Login!</a>
-                                                </div>
+
+                                                <?php if (!$this->ion_auth->logged_in()) { ?>
+                                                      <hr>
+                                                      <div class="text-center">
+                                                            <a class="small" href="<?= base_url('auth/login') ?>">Already have an account? Login!</a>
+                                                      </div>
+                                                <?php } ?>
                                     </div>
                               </div>
                         </div>

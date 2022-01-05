@@ -13,10 +13,15 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="int">Pemilik <?php echo form_error('pemilik') ?></label>
-                        <input type="text" class="form-control" name="pemilik" id="pemilik" placeholder="Pemilik" value="<?php echo $pemilik; ?>" <?php if ($this->ion_auth->in_group('pemilik')) {
-                                                                                                                                                        echo 'readonly';
-                                                                                                                                                    } ?> />
+                        <label for="pemilik">Pemilik <?php echo form_error('pemilik') ?></label>
+                        <select class="form-control" name="pemilik" id="pemilik">
+                                <option selected disabled>Pilih Pemilik</option>
+                                <?php foreach ($pemilik_list as $pl) : ?>
+                                    <option value="<?php echo $pl->id ?>" <?php if ($pl->id == $pemilik_selected) {
+                                                                                echo 'selected';
+                                                                            } ?>><?php echo $pl->first_name ?></option>
+                                <?php endforeach; ?>
+                            </select>
                     </div>
                     <div class="form-group">
                         <label for="varchar">Alamat <?php echo form_error('alamat') ?></label>

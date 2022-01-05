@@ -150,27 +150,24 @@ class Kost extends CI_Controller
         $type_kost = $this->db->select('*')->from('kost_type')->get()->result();
         $fasilitas = $this->db->select('*')->from('kost_fasilitas')->get()->result();
         $operator = $this->db->select('users.id, users.first_name')->from('users')->join('users_groups', 'users.id = users_groups.user_id')->where('users_groups.group_id', '4')->get()->result();
-        if ($this->ion_auth->in_group('pemilik')) {
-            $pemilik = $this->ion_auth->user()->row()->first_name;
-        } else {
-            $pemilik = set_value('pemilik');
-        }
+        $pemilik_list = $this->db->select('users.id, users.first_name')->from('users')->join('users_groups', 'users.id = users_groups.user_id')->where('users_groups.group_id', '3')->get()->result();
         $data = array(
             'first_name' => $this->ion_auth->user()->row()->first_name,
             'button' => 'Create',
             'action' => site_url('kost/create_action'),
             'id' => set_value('id'),
             'nama_kost' => set_value('nama_kost'),
-            'pemilik' => $pemilik,
             'alamat' => set_value('alamat'),
             'hp' => set_value('hp'),
             'jenis_kost' => $jenis_kost,
             'type_kost' => $type_kost,
             'fasilitas' => $fasilitas,
+            'pemilik_list' => $pemilik_list,
             'operator' => $operator,
             'jenis_selected' => '',
             'type_selected' => '',
             'fasilitas_selected' => [],
+            'pemilik_selected' => '',
             'operator_selected' => '',
             'harga' => set_value('harga'),
             'area_terdekat' => set_value('area_terdekat'),
@@ -191,7 +188,6 @@ class Kost extends CI_Controller
             } else {
                 $data = array(
                     'nama_kost' => $this->input->post('nama_kost', TRUE),
-                    'pemilik' => $this->input->post('pemilik', TRUE),
                     'alamat' => $this->input->post('alamat', TRUE),
                     'hp' => $this->input->post('hp', TRUE),
                     'jenis_kost' => $this->input->post('jenis_kost', TRUE),
@@ -199,6 +195,11 @@ class Kost extends CI_Controller
                     'harga' => $this->input->post('harga'),
                     'area_terdekat' => $this->input->post('area_terdekat', TRUE),
                 );
+                if($this->ion_auth->is_admin() || $this->ion_auth->in_group('operator')){
+                    $pemilik = $this->input->post('pemilik', TRUE);
+                } else {
+                    $pemilik = $this->ion_auth->user()->row()->id;
+                }
                 if ($this->ion_auth->is_admin() || $this->ion_auth->in_group('pemilik')) {
                     $data['operator'] = $this->input->post('operator', TRUE);
                 } else {
@@ -217,6 +218,8 @@ class Kost extends CI_Controller
                 foreach ($gambars as $gambar) {
                     $this->db->insert('kost_foto', array('kost_id' => $id, 'foto' => $gambar));
                 }
+
+                $this->db->insert('kost_pemilik', array('kost_id' => $id, 'pemilik_id' => $pemilik));
                 // return $this->db->error();
                 $this->session->set_flashdata('message', 'Create Record Success');
                 if ($this->ion_auth->is_admin()) {
@@ -243,6 +246,7 @@ class Kost extends CI_Controller
         $row = $this->Kost_model->get_by_id($id);
         $jenis_kost = $this->db->select('*')->from('jenis_kost')->get()->result();
         $type_kost = $this->db->select('*')->from('kost_type')->get()->result();
+        $pemilik_list = $this->db->select('users.id, users.first_name')->from('users')->join('users_groups', 'users.id = users_groups.user_id')->where('users_groups.group_id', '3')->get()->result();
         $fasilitas = $this->db->select('*')->from('kost_fasilitas')->get()->result();
         $fasilitas_selected = $this->db->select('fasilitas_id')->from('fasilitas_kost')->where('kost_id', $id)->get()->result();
         $operator = $this->db->select('users.id, users.first_name')->from('users')->join('users_groups', 'users.id = users_groups.user_id')->where('users_groups.group_id', '4')->get()->result();
@@ -253,7 +257,8 @@ class Kost extends CI_Controller
                 'action' => site_url('kost/update_action'),
                 'id' => set_value('id', $row->id),
                 'nama_kost' => set_value('nama_kost', $row->nama_kost),
-                'pemilik' => set_value('pemilik', $row->pemilik),
+                'pemilik_list' => $pemilik_list,
+                'pemilik_selected' => $row->pemilik,
                 'alamat' => set_value('alamat', $row->alamat),
                 'hp' => set_value('hp', $row->hp),
                 'jenis_kost' => $jenis_kost,
@@ -292,7 +297,6 @@ class Kost extends CI_Controller
             } else {
                 $data = array(
                     'nama_kost' => $this->input->post('nama_kost', TRUE),
-                    'pemilik' => $this->input->post('pemilik', TRUE),
                     'alamat' => $this->input->post('alamat', TRUE),
                     'hp' => $this->input->post('hp', TRUE),
                     'jenis_kost' => $this->input->post('jenis_kost', TRUE),
@@ -300,6 +304,11 @@ class Kost extends CI_Controller
                     'harga' => $this->input->post('harga'),
                     'area_terdekat' => $this->input->post('area_terdekat', TRUE),
                 );
+                if($this->ion_auth->is_admin() || $this->ion_auth->in_group('operator')){
+                    $pemilik = $this->input->post('pemilik', TRUE);
+                } else {
+                    $pemilik = $this->ion_auth->user()->row()->id;
+                }
                 if ($this->ion_auth->is_admin() || $this->ion_auth->in_group('pemilik')) {
                     $data['operator'] = $this->input->post('operator', TRUE);
                 } else {
@@ -317,6 +326,11 @@ class Kost extends CI_Controller
                 foreach ($fasilitas as $f) {
                     $this->db->insert('fasilitas_kost', array('kost_id' => $id, 'fasilitas_id' => $f));
                 }
+
+                $this->db->where('kost_id', $id);
+                $this->db->delete('kost_pemilik');
+
+                $this->db->insert('kost_pemilik', array('kost_id' => $id, 'pemilik_id' => $pemilik));
 
                 foreach ($_FILES['foto_kost']['name'] as $f) {
                     if ($f != '') {

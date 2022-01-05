@@ -52,12 +52,14 @@ class Api extends CI_Controller
                 $this->output->set_status_header(400);
             } else {
                 $id = $this->input->post('id');
-                $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, users.first_name, users.avatar,  users.no_wa, users.last_logout, users.last_login ,kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, kost.hp, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
                     ->join('kost_foto', 'kost.id = kost_foto.kost_id')
-                    ->join('users', 'kost.operator=users.id')
+                    ->join('kost_pemilik', 'kost.id=kost_pemilik.kost_id')
+                    ->join('users pemilik', 'kost_pemilik.pemilik_id=pemilik.id')
+                    ->join('users operator', 'kost.operator=operator.id')
                     ->where('kost.id', $id)
                     ->get()
                     ->row();
@@ -96,7 +98,7 @@ class Api extends CI_Controller
         $arr = [];
         if ($this->input->post('apiKey') == $this->apiKey) {
             $jenis = $this->input->post('jenis');
-            $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+            $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
                 ->from('kost')
                 ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                 ->join('kost_type', 'kost.type_kost = kost_type.id')
@@ -110,7 +112,6 @@ class Api extends CI_Controller
                 $arr[] = [
                     'id_kost' => $q->id,
                     'nama_kost' => $q->nama_kost,
-                    'pemilik' => $q->pemilik,
                     'alamat' => $q->alamat,
                     'no_hp' => $q->no_hp,
                     'jenis_id' => $q->jenis_kost,
@@ -173,7 +174,7 @@ class Api extends CI_Controller
         $arr = [];
         if ($this->input->post('apiKey') == $this->apiKey) {
             if ($this->input->post('input') == '') {
-                $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp,  kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.hp AS no_hp,  kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
@@ -185,13 +186,12 @@ class Api extends CI_Controller
                     ->result();
             } else {
                 $input = $this->input->post('input');
-                $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp,  kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.hp AS no_hp,  kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
                     ->join('kost_foto', 'kost_foto.kost_id=kost.id')
                     ->like('kost.nama_kost', $input)
-                    ->or_like('kost.pemilik', $input)
                     ->or_like('kost.alamat', $input)
                     ->group_by('kost.id')
                     ->get()
@@ -202,7 +202,6 @@ class Api extends CI_Controller
                 $arr[] = [
                     'id_kost' => $q->id,
                     'nama_kost' => $q->nama_kost,
-                    'pemilik' => $q->pemilik,
                     'alamat' => $q->alamat,
                     'no_hp' => $q->no_hp,
                     'jenis_id' => $q->jenis_kost,
@@ -338,7 +337,7 @@ class Api extends CI_Controller
                     echo json_encode(
                         [
                             'status' => 'error',
-                            'message' => 'Register gagal, email sudah digunakan'
+                            'message' => 'Registrasi gagal, email sudah digunakan'
                         ]
                     );
                 } else {
@@ -347,7 +346,7 @@ class Api extends CI_Controller
                         echo json_encode(
                             [
                                 'status' => 'success',
-                                'message' => 'Register berhasil, silahkan Login'
+                                'message' => 'Registrasi berhasil, silahkan Login'
                             ]
                         );
                     } else {
@@ -355,7 +354,7 @@ class Api extends CI_Controller
                         echo json_encode(
                             [
                                 'status' => 'error',
-                                'message' => 'Register gagal'
+                                'message' => 'Registrasi gagal'
                             ]
                         );
                     }

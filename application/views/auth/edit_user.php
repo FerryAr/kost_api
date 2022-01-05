@@ -41,7 +41,11 @@
                               <div class="col-lg-7">
                                     <div class="p-5">
                                           <div class="text-center">
-                                                <h1 class="h4 text-gray-900 mb-4">Edit User</h1>
+                                                <?php if (!$this->input->get('group') == '3') { ?>
+                                                      <h1 class="h4 text-gray-900 mb-4">Edit User</h1>
+                                                <?php } else { ?>
+                                                      <h1 class="h4 text-gray-900 mb-4">Edit Pemilik</h1>
+                                                <?php } ?>
                                           </div>
                                           <form class="user" method="POST" action="<?= base_url(uri_string()) ?>" enctype="multipart/form-data">
                                                 <div class="form-group row">
@@ -84,17 +88,30 @@
                                                       </div>
                                                 </div>
 
-                                                <?php if ($this->ion_auth->is_admin()) : ?>
-
-                                                      <h3><?php echo lang('edit_user_groups_heading'); ?></h3>
-                                                      <?php foreach ($groups as $group) : ?>
+                                                <?php if ($this->ion_auth->is_admin()) { ?>
+                                                      <?php if (!$this->input->get('group') == '3') { ?>
+                                                            <h3><?php echo lang('edit_user_groups_heading'); ?></h3>
+                                                            <?php foreach ($groups as $group) : ?>
+                                                                  <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" name="groups[]" value="<?php echo $group['id']; ?>" <?php echo (in_array($group, $currentGroups)) ? 'checked="checked"' : null; ?>>
+                                                                        <?php echo htmlspecialchars($group['name'], ENT_QUOTES, 'UTF-8'); ?>
+                                                                  </div>
+                                                            <?php endforeach ?>
+                                                      <?php } else { ?>
+                                                            <h3><?php echo lang('edit_user_groups_heading'); ?></h3>
                                                             <div class="form-check">
-                                                                  <input class="form-check-input" type="checkbox" name="groups[]" value="<?php echo $group['id']; ?>" <?php echo (in_array($group, $currentGroups)) ? 'checked="checked"' : null; ?>>
-                                                                  <?php echo htmlspecialchars($group['name'], ENT_QUOTES, 'UTF-8'); ?>
+                                                                  <input class="form-check-input" type="checkbox" name="groups[]" value="3" checked/>
+                                                                  <?php echo htmlspecialchars("Pemilik", ENT_QUOTES, 'UTF-8'); ?>
                                                             </div>
-                                                      <?php endforeach ?>
+                                                            <!-- <?php //foreach ($groups as $group) : ?>
+                                                                  <div class="form-check">
+                                                                        <input class="form-check-input" type="checkbox" name="groups[]" value="<?php echo $group['id']; ?>" <?php echo (in_array($group, $currentGroups)) ? 'checked="checked"' : null; ?>>
+                                                                        <?php //echo htmlspecialchars($group['name'], ENT_QUOTES, 'UTF-8'); ?>
+                                                                  </div>
+                                                            <?php //endforeach ?> -->
+                                                      <?php } ?>
 
-                                                <?php endif ?>
+                                                <?php } ?>
 
                                                 <?php echo form_hidden('id', $user->id); ?>
                                                 <?php echo form_hidden($csrf); ?>
