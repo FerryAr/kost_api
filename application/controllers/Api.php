@@ -57,6 +57,8 @@ class Api extends CI_Controller
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
                     ->join('kost_foto', 'kost.id = kost_foto.kost_id')
+                    ->join('kost_fasilitas', 'kost.id = kost_fasilitas.kost_id')
+                    ->join('fasilitas_kost', 'kost_fasilitas.fasilitas_id = fasilitas_kost.id')
                     ->join('kost_pemilik', 'kost.id=kost_pemilik.kost_id')
                     ->join('users pemilik', 'kost_pemilik.pemilik_id=pemilik.id')
                     ->join('users operator', 'kost.operator=operator.id')
