@@ -498,6 +498,38 @@ class Api extends CI_Controller
             $this->output->set_status_header(403);
         }
     }
+
+    public function get_all_blog()
+    {
+        if ($this->input->post("apiKey") == $this->apiKey) {
+            $arr = [];
+            $query = $this->db->select('blog.id, blog.thumbnail, kategori_blog.nama_kategori, blog.judul, blog.isi, blog.dibuat_pada')
+                ->from('blog')
+                ->join('kategori_blog', 'kategori_blog.id = blog.kategori_id')
+                ->order_by('blog.id', 'desc')
+                ->get()
+                ->result();
+            foreach ($query as $q) {
+                $arr[] = [
+                    'id' => $q->id,
+                    'thumbnail' => $q->thumbnail,
+                    'kategori' => $q->nama_kategori,
+                    'judul' => $q->judul,
+                    'isi' => $q->isi,
+                    'dibuat_pada' => $q->dibuat_pada,
+                ];
+            }
+            header('Content-Type: application/json');
+            echo json_encode(
+                [
+                    'status' => 'success',
+                    'data' => $arr,
+                ]
+            );
+        } else {
+            $this->output->set_status_header(403);
+        }
+    }
 }
 
 /* End of file Api.php and path /application/controllers/Api.php */

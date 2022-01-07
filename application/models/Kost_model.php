@@ -97,10 +97,18 @@ class Kost_model extends CI_Model
     // get data by id
     function get_by_id($id)
     {
-        $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp, kost.jenis_kost, kost.type_kost, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat, kost.operator')
+        $query = $this->db->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, kost.hp, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat')
             ->from('kost')
+            ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
+            ->join('kost_type', 'kost.type_kost = kost_type.id')
+            ->join('fasilitas_kost', 'kost.id=fasilitas_kost.kost_id')
+            ->join('kost_fasilitas', 'fasilitas_kost.fasilitas_id=kost_fasilitas.id')
             ->join('kost_foto', 'kost.id=kost_foto.kost_id')
+            ->join('kost_pemilik', 'kost.id=kost_pemilik.kost_id')
+            ->join('users pemilik', 'kost_pemilik.pemilik_id=pemilik.id')
+            ->join('users operator', 'kost.operator=operator.id')
             ->where('kost.id', $id)
+            ->group_by('kost.id')
             ->get();
         return $query->row();
     }

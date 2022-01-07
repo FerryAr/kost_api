@@ -115,32 +115,28 @@ class Kost extends CI_Controller
     public function read($id)
     {
         $row = $this->Kost_model->get_by_id($id);
-        $detail_kost = $this->db->select('kost_detail.nama_kamar, kost_detail.deskripsi_kamar, kost_detail.harga, kost_detail.fasilitas, GROUP_CONCAT(kost_foto.foto) AS foto')
-            ->from('kost_detail')
-            //->join('kost', 'kost_detail.id_kost = kost.id')
-            ->join('kost_foto', 'kost_detail.id = kost_foto.kost_detail_id')
-            ->where('kost_detail.id_kost', $id)
-            ->group_by('kost_detail.id')
-            ->get()->result();
         if ($row) {
+            $fasilitas = explode(',', $row->fasilitas);
+            $foto = explode(',', $row->foto);
             $data = array(
                 'id' => $row->id,
                 'nama_kost' => $row->nama_kost,
                 'pemilik' => $row->pemilik,
                 'alamat' => $row->alamat,
-                'hp' => $row->hp,
                 'jenis_kost' => $row->jenis,
+                'type_kost' => $row->type,
+                'harga' => $row->harga,
+                'fasilitas' => $fasilitas,
+                'foto' => $foto,
+                'operator' => $row->first_name,
                 'area_terdekat' => $row->area_terdekat,
-                'detail_kost' => $detail_kost,
-                'first_name' => $this->ion_auth->user()->row()->first_name,
             );
             $this->load->view('_template/header', $data);
             $this->load->view('kost/kost_read');
             $this->load->view('_template/footer');
-            //$this->load->view('kost/kost_read', $data);
         } else {
             $this->session->set_flashdata('message', 'Record Not Found');
-            redirect(site_url('kost'));
+            redirect(site_url('/'));
         }
     }
 

@@ -78,13 +78,6 @@
                         <i class="fas fa-fw fa-cog"></i>
                         <span>Setting Akun</span>
                     </a>
-                    <!-- <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Components:</h6>
-                        <a class="collapse-item" href="buttons.html">Buttons</a>
-                        <a class="collapse-item" href="cards.html">Cards</a>
-                    </div>
-                </div> -->
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="<?= base_url('carousel_iklan') ?>">
@@ -96,6 +89,22 @@
                     <a class="nav-link" href="<?= base_url('daftar_pemilik') ?>">
                         <i class="fas fa-fw fa-home"></i>
                         <span>Daftar Pemilik</span>
+                    </a>
+                </li>
+                <hr class="sidebar-divider">
+                <div class="sidebar-heading">
+                    Blog
+                </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url('blog') ?>">
+                        <i class="fas fa-fw fa-blog"></i>
+                        <span>Postingan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= base_url('kategori') ?>">
+                        <i class="fas fa-fw fa-tags"></i>
+                        <span>Kategori</span>
                     </a>
                 </li>
             <?php } ?>

@@ -31,7 +31,6 @@
             <th>Operator</th>
             <th>Fasilitas</th>
             <th>Area Terdekat</th>
-            <th>Foto</th>
             <th width="200px">Action</th>
         </tr>
     </thead>
@@ -122,19 +121,19 @@
                 {
                     "data": "area_terdekat"
                 },
-                {
-                    "data": "foto",
-                    "render": function(data) {
-                        var foto = data.split(',');
-                        var output = '';
-                        for (var i = 0; i < foto.length; i++) {
-                            output += '<img class="img-responsive" src="<?php echo base_url() ?>assets/img/foto_kost/' + foto[i] + '" style="margin: 2rem 2rem 2rem 2rem; width: 40%; height: 40%"/>';
-                        }
-                        return output;
-                        //return '<img src="<?php echo base_url() ?>assets/img/'+data+'" style="width: 100%; height: 100%;" />';
-                    },
-                    "orderable": false
-                },
+                // {
+                //     "data": "foto",
+                //     "render": function(data) {
+                //         var foto = data.split(',');
+                //         var output = '';
+                //         for (var i = 0; i < foto.length; i++) {
+                //             output += '<img class="img-responsive" src="<?php echo base_url() ?>assets/img/foto_kost/' + foto[i] + '" style="margin: 2rem 2rem 2rem 2rem; width: 40%; height: 40%"/>';
+                //         }
+                //         return output;
+                //         //return '<img src="<?php echo base_url() ?>assets/img/'+data+'" style="width: 100%; height: 100%;" />';
+                //     },
+                //     "orderable": false
+                // },
                 {
                     "data": "action",
                     "orderable": false,

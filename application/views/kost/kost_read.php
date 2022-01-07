@@ -1,17 +1,3 @@
-<!-- <!doctype html>
-<html>
-    <head>
-        <title>harviacode.com - codeigniter crud generator</title>
-        <link rel="stylesheet" href="<?php echo base_url('assets/bootstrap/css/bootstrap.min.css') ?>"/>
-        <style>
-            body{
-                padding: 15px;
-            }
-        </style>
-    </head>
-    <body> -->
-
-
 <!-- Begin Page Content -->
 <div class="container-fluid">
     <div class="row" style="margin-bottom: 10px">
@@ -28,20 +14,46 @@
                 <td><?php echo $pemilik; ?></td>
             </tr>
             <tr>
+                <td>Operator</td>
+                <td><?php echo $operator; ?></td>
+            </tr>
+            <tr>
                 <td>Alamat</td>
                 <td><?php echo $alamat; ?></td>
             </tr>
             <tr>
-                <td>Hp</td>
-                <td><?php echo $hp; ?></td>
+                <td>Tipe Kost</td>
+                <td><?php echo $type_kost; ?></td>
             </tr>
             <tr>
                 <td>Jenis Kost</td>
                 <td><?php echo $jenis_kost; ?></td>
             </tr>
             <tr>
+                <td>Fasilitas</td>
+                <td>
+                    <ul>
+                        <?php foreach ($fasilitas as $f) { ?>
+                            <li><?php echo $f; ?></li>
+                        <?php } ?>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>Harga</td>
+                <td><?php echo number_format($harga, 0, ',', '.'); ?></td>
+            </tr>
+            <tr>
                 <td>Area Terdekat</td>
                 <td><?php echo $area_terdekat; ?></td>
+            </tr>
+            <tr>
+                <td>Foto Kost</td>
+                <td>
+                    <?php foreach ($foto as $f) { ?>
+                        <img src="<?= base_url('assets/img/foto_kost/'. $f) ?>" class="img-responsive mt-3" style="width: 852px; height:480px" />
+                    <?php } ?>
+                </td>
             </tr>
         </table>
         <!-- <div class="col-md-4">
@@ -64,25 +76,33 @@
                 // foreach ($detail_kost as $k) {
                 ?>
                     <tr>
-                        <td><?php //echo $no++ ?></td>
-                        <td><?php //echo $k->nama_kamar ?></td>
-                        <td><?php //echo $k->deskripsi_kamar ?></td>
-                        <td><?php //echo $k->harga ?></td>
-                        <td><?php //echo $k->fasilitas ?></td>
-                        <!-- <td><img src="<?php //echo base_url('assets/img/kamar/' . $k->foto) ?>" width="100" height="100"></td> -->
-                        <td>
-                            <?php
-                            //$data_foto = $k->foto;
-                            //$foto = explode(",", $data_foto);
-                            //foreach ($foto as $f) {
-                            ?>
-                                <!-- <img src="<?php //echo base_url('assets/img/' . $f) ?>" style="margin-top:2rem; margin-bottom:2rem">
-                            <?php //} ?> -->
-                        </td>
-                    </tr>
-                <?php
-                //}
-                ?>
+                        <td><?php //echo $no++ 
+                            ?></td>
+                        <td><?php //echo $k->nama_kamar 
+                            ?></td>
+                        <td><?php //echo $k->deskripsi_kamar 
+                            ?></td>
+                        <td><?php //echo $k->harga 
+                            ?></td>
+                        <td><?php //echo $k->fasilitas 
+                            ?></td>
+                        <!-- <td><img src="<?php //echo base_url('assets/img/kamar/' . $k->foto) 
+                                            ?>" width="100" height="100"></td> -->
+        <td>
+            <?php
+            //$data_foto = $k->foto;
+            //$foto = explode(",", $data_foto);
+            //foreach ($foto as $f) {
+            ?>
+            <!-- <img src="<?php //echo base_url('assets/img/' . $f) 
+                            ?>" style="margin-top:2rem; margin-bottom:2rem">
+                            <?php //} 
+                            ?> -->
+        </td>
+        </tr>
+        <?php
+        //}
+        ?>
         <!-- </table> --> -->
         <a href="<?php echo site_url('kost') ?>" class="btn btn-secondary">Kembali</a>
     </div>
