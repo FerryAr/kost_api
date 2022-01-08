@@ -64,7 +64,7 @@ class Blog extends CI_Controller
                     'thumbnail' => $file_data['file_name'],
                     'kategori_id' => $this->input->post('kategori'),
                     'isi' => $this->input->post('isi'),
-                    'dibuat_pada' => date('Y-m-d H:i:s'),
+                    'dibuat_pada' => time(),
                 );
                 if (!$this->db->insert('blog', $query_data)) {
                     unlink(realpath(FCPATH . 'assets/img/blog_thumb/' . $query_data['nama_file']));
@@ -135,7 +135,6 @@ class Blog extends CI_Controller
                         'thumbnail' => $file_data['file_name'],
                         'kategori_id' => $this->input->post('kategori'),
                         'isi' => $this->input->post('isi'),
-                        'dibuat_pada' => date('Y-m-d H:i:s'),
                     );
                     $this->db->where('id', $this->input->post('id'));
                     if (!$this->db->update('blog', $query_data)) {
