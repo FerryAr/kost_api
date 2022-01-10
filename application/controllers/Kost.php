@@ -154,7 +154,6 @@ class Kost extends CI_Controller
             'id' => set_value('id'),
             'nama_kost' => set_value('nama_kost'),
             'alamat' => set_value('alamat'),
-            'hp' => set_value('hp'),
             'jenis_kost' => $jenis_kost,
             'type_kost' => $type_kost,
             'fasilitas' => $fasilitas,
@@ -185,7 +184,6 @@ class Kost extends CI_Controller
                 $data = array(
                     'nama_kost' => $this->input->post('nama_kost', TRUE),
                     'alamat' => $this->input->post('alamat', TRUE),
-                    'hp' => $this->input->post('hp', TRUE),
                     'jenis_kost' => $this->input->post('jenis_kost', TRUE),
                     'type_kost' => $this->input->post('type_kost', TRUE),
                     'harga' => $this->input->post('harga'),
@@ -256,7 +254,6 @@ class Kost extends CI_Controller
                 'pemilik_list' => $pemilik_list,
                 'pemilik_selected' => $row->pemilik,
                 'alamat' => set_value('alamat', $row->alamat),
-                'hp' => set_value('hp', $row->hp),
                 'jenis_kost' => $jenis_kost,
                 'type_kost' => $type_kost,
                 'jenis_selected' => $row->jenis_kost,
@@ -294,7 +291,6 @@ class Kost extends CI_Controller
                 $data = array(
                     'nama_kost' => $this->input->post('nama_kost', TRUE),
                     'alamat' => $this->input->post('alamat', TRUE),
-                    'hp' => $this->input->post('hp', TRUE),
                     'jenis_kost' => $this->input->post('jenis_kost', TRUE),
                     'type_kost' => $this->input->post('type_kost', TRUE),
                     'harga' => $this->input->post('harga'),

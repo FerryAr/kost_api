@@ -24,7 +24,6 @@
             <th>Nama Kost</th>
             <th>Pemilik</th>
             <th>Alamat</th>
-            <th>Hp</th>
             <th>Jenis Kost</th>
             <th>Tipe Kost</th>
             <th>Harga</th>
@@ -100,8 +99,6 @@
                     "data": "pemilik"
                 }, {
                     "data": "alamat"
-                }, {
-                    "data": "hp"
                 }, {
                     "data": "jenis"
                 },

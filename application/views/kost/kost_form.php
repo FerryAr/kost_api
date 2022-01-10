@@ -28,10 +28,6 @@
                         <input type="text" class="form-control" name="alamat" id="alamat" placeholder="Alamat" value="<?php echo $alamat; ?>" />
                     </div>
                     <div class="form-group">
-                        <label for="varchar">Hp <?php echo form_error('hp') ?></label>
-                        <input type="text" class="form-control" name="hp" id="hp" placeholder="Hp" value="<?php echo $hp; ?>" />
-                    </div>
-                    <div class="form-group">
                         <label for="int">Jenis Kost <?php echo form_error('jenis_kost') ?></label>
                         <select class="form-control" id="jenis_kost" name="jenis_kost">
                             <option selected>Pilih Jenis Kost</option>
