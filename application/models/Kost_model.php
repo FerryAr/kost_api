@@ -18,7 +18,7 @@ class Kost_model extends CI_Model
 
     // datatables
     function json() {
-        $this->datatables->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat');
+        $this->datatables->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, jenis_kost.jenis, kost_type.type, FORMAT(kost.harga, 0, "id_ID") AS harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat');
         $this->datatables->from('kost');
         $this->datatables->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id');
         $this->datatables->join('kost_type', 'kost.type_kost = kost_type.id');
