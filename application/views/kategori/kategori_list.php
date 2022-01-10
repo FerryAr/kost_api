@@ -14,12 +14,12 @@
             <?php echo anchor(site_url('kategori/create'), 'Create', 'class="btn btn-primary"'); ?>
         </div>
     </div>
-    <table class="table table-striped">
-        <tr>
+    <table class="table" id="table-kategori">
+        <thead>
             <th>No</th>
             <th>Nama Kategori</th>
             <th>Aksi</th>
-        </tr>
+        </thead>
         <?php $no = 1;
         foreach ($kategori_blog as $k) { ?>
             <tr>
@@ -52,3 +52,14 @@
 <script src="<?= base_url('assets/vendor/datatables/dataTables.bootstrap4.min.js') ?>"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#table-kategori').DataTable({
+            responsive: true,
+            columnDefs: [{
+                orderable: false,
+                targets: [0,2]
+            }]
+        });
+    });
+</script>

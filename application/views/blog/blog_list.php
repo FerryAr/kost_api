@@ -14,18 +14,17 @@
             <?php echo anchor(site_url('blog/create'), 'Create', 'class="btn btn-primary"'); ?>
         </div>
     </div>
-    <table class="table table-striped">
-        <tr>
+    <table class="table" id="table-blog">
+        <thead>
             <th>No</th>
             <th>Judul</th>
             <th>Thumbnail</th>
             <th>Kategori</th>
             <th>Aksi</th>
-        </tr>
+        </thead>
         <?php $no = 1;
         foreach ($blog as $b) { ?>
             <tr>
-
                 <td><?= $no++ ?></td>
                 <td><?= $b->judul ?></td>
                 <td><img src="<?= base_url('assets/img/blog_thumb/'.$b->thumbnail) ?>" style="width: 6rem"></td>
@@ -56,3 +55,16 @@
 <script src="<?= base_url('assets/vendor/datatables/dataTables.bootstrap4.min.js') ?>"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#table-blog').DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            "columnDefs": [{
+                "targets": [0, 4],
+                "orderable": false
+            }]
+        });
+    });
+</script>

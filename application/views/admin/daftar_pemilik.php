@@ -16,8 +16,8 @@
         <?php } ?>
     </div>
 
-    <table class="table table-striped">
-        <tr>
+    <table class="table table-bordered" id="tabel-pemilik">
+        <thead>
             <th>No</th>
             <th>Nama Depan</th>
             <th>Nama Belakang</th>
@@ -27,7 +27,7 @@
             <!-- <th><?php //echo lang('index_groups_th'); ?></th>
             <th><?php //echo lang('index_status_th'); ?></th> -->
             <th>Action</th>
-        </tr>
+        </thead>
         <?php $no=1;foreach ($users as $user) : ?>
             <tr>
                 <td><?php echo $no++ ?></td>
@@ -66,3 +66,17 @@
 <script src="<?= base_url('assets/vendor/datatables/dataTables.bootstrap4.min.js') ?>"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap4.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#tabel-pemilik').DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            "columnDefs": [{
+                "orderable": false,
+                "targets": [0,5]
+            },
+        ]
+        });
+    });
+</script>

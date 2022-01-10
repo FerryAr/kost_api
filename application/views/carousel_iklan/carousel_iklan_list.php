@@ -13,7 +13,7 @@
             <?php echo anchor(site_url('carousel_iklan/create'), 'Create', 'class="btn btn-primary"'); ?>
         </div>
     </div>
-    <table class="table table-bordered table-striped" id="mytable">
+    <table class="table table-bordered" id="mytable">
         <thead>
             <tr>
                 <th width="80px">No</th>

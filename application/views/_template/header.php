@@ -20,6 +20,22 @@
     <link href="<?= base_url('assets/vendor/datatables/dataTables.bootstrap4.min.css') ?>" rel="stylesheet">
 
     <link href="<?= base_url('assets/vendor/dropify/css/dropify.min.css') ?>" rel="stylesheet">
+
+    <style>
+        table.dataTable {
+            clear: both;
+            margin-top: 6px !important;
+            margin-bottom: 6px !important;
+            max-width: none !important;
+            border-collapse: separate !important;
+            border-spacing: 0;
+        }
+
+        table.dataTable tbody tr:hover {
+            background-color: #9e9e9e9e !important;
+
+        }
+    </style>
 </head>
 
 <body id="page-top">
