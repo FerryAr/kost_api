@@ -141,12 +141,13 @@ class Api extends CI_Controller
     {
         $arr = [];
         if ($this->input->post('apiKey') == $this->apiKey) {
-            $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+            $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat, kost.unggulan')
                 ->from('kost')
                 ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                 ->join('kost_type', 'kost.type_kost = kost_type.id')
                 ->join('kost_foto', 'kost_foto.kost_id=kost.id')
                 ->where('kost.unggulan', 1)
+                ->limit(10)
                 ->group_by('kost.id')
                 ->get()
                 ->result();
@@ -161,6 +162,48 @@ class Api extends CI_Controller
                     'type' => $q->type,
                     'harga' => $q->harga,
                     'area_terdekat' => $q->area_terdekat,
+                    'unggulan' => $q->unggulan,
+                    'foto' => reset($foto),
+                ];
+            }
+            header('Content-Type: application/json');
+            echo json_encode(
+                [
+                    'status' => 'success',
+                    'data' => $arr
+                ]
+            );
+        } else {
+            $this->output->set_status_header(403);
+        }
+    }
+    public function get_kost_terbaru()
+    {
+        $arr = [];
+        if ($this->input->post('apiKey') == $this->apiKey) {
+            $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat, kost.unggulan')
+                ->from('kost')
+                ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
+                ->join('kost_type', 'kost.type_kost = kost_type.id')
+                ->join('kost_foto', 'kost_foto.kost_id=kost.id')
+                ->limit(10)
+                ->where('kost.update_time > UNIX_TIMESTAMP(NOW() - INTERVAL 1 WEEK)')
+                ->order_by('kost.update_time', 'DESC')
+                ->group_by('kost.id')
+                ->get()
+                ->result();
+            foreach ($query as $q) {
+                $foto = explode(',', $q->foto);
+                $arr[] = [
+                    'id_kost' => $q->id,
+                    'nama_kost' => $q->nama_kost,
+                    'alamat' => $q->alamat,
+                    'jenis_id' => $q->jenis_kost,
+                    'jenis' => $q->jenis,
+                    'type' => $q->type,
+                    'harga' => $q->harga,
+                    'area_terdekat' => $q->area_terdekat,
+                    'unggulan' => $q->unggulan,
                     'foto' => reset($foto),
                 ];
             }
@@ -176,40 +219,6 @@ class Api extends CI_Controller
         }
     }
 
-    // public function get_kost_detail()
-    // {
-    //     $arr = [];
-    //     if ($this->input->post('apiKey') == $this->apiKey) {
-    //         $id_kost = $this->input->post('id_kost');
-    //         $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, users.first_name, kost.area_terdekat')
-    //             ->from('kost_detail')
-    //             ->join('kost_foto', 'kost_detail.id = kost_foto.kost_detail_id')
-    //             ->where('kost_detail.id_kost', $id_kost)
-    //             ->group_by('kost_detail.id')
-    //             ->get()
-    //             ->result();
-    //         if (count($query) == 0) {
-    //             $this->output->set_status_header(404);
-    //         } else {
-    //             foreach ($query as $q) {
-    //                 $arr[] = [
-    //                     'nama_kamar' => $q->nama_kamar,
-    //                     'deskripsi_kamar' => $q->deskripsi_kamar,
-    //                     'harga' => $q->harga,
-    //                     'fasilitas' => $q->fasilitas,
-    //                     'foto' => $q->foto
-    //                 ];
-    //             }
-    //             header('Content-Type: application/json');
-    //             echo json_encode(
-    //                 [
-    //                     'status' => 'success',
-    //                     'data' => $query
-    //                 ]
-    //             );
-    //         }
-    //     }
-    // }
     public function get_kost_by_input()
     {
         $arr = [];
@@ -263,10 +272,6 @@ class Api extends CI_Controller
         } else {
             $this->output->set_status_header(403);
         }
-    }
-
-    public function get_kost_terbaru() {
-
     }
 
     public function get_jenis()
