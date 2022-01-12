@@ -5,7 +5,7 @@ SET time_zone = '+00:00';
 SET foreign_key_checks = 0;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
-USE `diengcyber_kost`;
+USE `zobokost`;
 
 SET NAMES utf8mb4;
 
@@ -127,6 +127,8 @@ CREATE TABLE `kost` (
   `harga` varchar(50) NOT NULL,
   `area_terdekat` text NOT NULL,
   `operator` int(11) unsigned NOT NULL,
+  `unggulan` int(11) NOT NULL,
+  `update_time` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `kost` (`jenis_kost`),
   KEY `type_kost` (`type_kost`),
@@ -137,8 +139,8 @@ CREATE TABLE `kost` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 TRUNCATE `kost`;
-INSERT INTO `kost` (`id`, `nama_kost`, `alamat`, `jenis_kost`, `type_kost`, `harga`, `area_terdekat`, `operator`) VALUES
-(25,	'PUTU AYU',	'Wonosobo',	3,	2,	'10000000',	'alun alun',	3);
+INSERT INTO `kost` (`id`, `nama_kost`, `alamat`, `jenis_kost`, `type_kost`, `harga`, `area_terdekat`, `operator`, `unggulan`, `update_time`) VALUES
+(25,	'PUTU AYU',	'Wonosobo',	3,	2,	'10000000',	'alun alun',	3,	1,	1641955383);
 
 DROP TABLE IF EXISTS `kost_detail`;
 CREATE TABLE `kost_detail` (
@@ -186,8 +188,7 @@ CREATE TABLE `kost_foto` (
 
 TRUNCATE `kost_foto`;
 INSERT INTO `kost_foto` (`id`, `kost_id`, `foto`) VALUES
-(102,	25,	'promo-tangguh-bersama-homebanner-banner-promo-1.png'),
-(103,	25,	'homebanner-promo-page-tokensinggah.png');
+(104,	25,	'promo-tangguh-bersama-homebanner-banner-promo-1.png');
 
 DROP TABLE IF EXISTS `kost_pemilik`;
 CREATE TABLE `kost_pemilik` (
@@ -273,7 +274,7 @@ CREATE TABLE `users` (
 
 TRUNCATE `users`;
 INSERT INTO `users` (`id`, `ip_address`, `username`, `password`, `email`, `activation_selector`, `activation_code`, `forgotten_password_selector`, `forgotten_password_code`, `forgotten_password_time`, `remember_selector`, `remember_code`, `created_on`, `last_login`, `active`, `first_name`, `last_name`, `alamat`, `no_wa`, `avatar`, `login_status`, `last_logout`) VALUES
-(1,	'127.0.0.1',	'administrator',	'$2y$10$1.4E9R5hlWZgHHxTZx0tK.WjPbZMUspHwoLgh8EZy7lILBvzA6JTG',	'admin@admin.com',	NULL,	'',	NULL,	NULL,	NULL,	NULL,	NULL,	1268889823,	1641800219,	1,	'Admin',	'istrator',	'ADMIN',	'0',	'',	1,	0),
+(1,	'127.0.0.1',	'administrator',	'$2y$10$1.4E9R5hlWZgHHxTZx0tK.WjPbZMUspHwoLgh8EZy7lILBvzA6JTG',	'admin@admin.com',	NULL,	'',	NULL,	NULL,	NULL,	NULL,	NULL,	1268889823,	1641954079,	1,	'Admin',	'istrator',	'ADMIN',	'0',	'',	1,	0),
 (2,	'127.0.0.1',	NULL,	'$2y$10$x/HrDKHGgz7CB.cnlzWKPOrcMoB06vdEG.QBGMQ5PyeGXgsyUasle',	'ferryakbarardiansyah@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639465829,	1640745035,	1,	'azrl',	'akbr',	'wonosobon',	'(+62) 81228679721',	'',	0,	1640745051),
 (3,	'127.0.0.1',	NULL,	'$2y$10$4vnM.dvP4e1rPlailrdFIuNSKp/2HkN3iFjV3n.vQyNLlt39TSIze',	'ferryar789@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1639813861,	1640745057,	1,	'Akbar',	'',	'Wonosobo',	'+6285640089448',	'76776556_1404306159736687_6385862615276453888_n1.jpg',	0,	0),
 (17,	'127.0.0.1',	NULL,	'$2y$10$wrQKc/1NyMvoX.EA4WKqUOBsZbaoGXGtUQGM.mXj48Go3SDurAoii',	'a@gmail.com',	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	NULL,	1641362932,	NULL,	1,	'Pemilik',	'1',	'wonosobo',	'08888888',	'mboh.png',	0,	NULL);
@@ -299,4 +300,4 @@ INSERT INTO `users_groups` (`id`, `user_id`, `group_id`) VALUES
 (6,	3,	4),
 (23,	17,	3);
 
--- 2022-01-10 08:39:12
+-- 2022-01-12 03:11:32
