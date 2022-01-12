@@ -14,36 +14,36 @@ class Api extends CI_Controller
         $this->load->model('ion_auth_model');
         $this->load->library('ion_auth');
     }
-    public function get_all_kost()
-    {
-        $arr = [];
-        if ($this->input->post('apiKey') == $this->apiKey) {
-            $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, jenis_kost.jenis, kost.area_terdekat, kost.foto_unggulan')
-                ->from('kost')
-                ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
-                ->get()
-                ->result();
-            foreach ($query as $q) {
-                $arr[] = [
-                    'id_kost' => $q->id,
-                    'nama_kost' => $q->nama_kost,
-                    'pemilik' => $q->pemilik,
-                    'alamat' => $q->alamat,
-                    'no_hp' => $q->no_hp,
-                    'jenis' => $q->jenis,
-                    'area_terdekat' => $q->area_terdekat,
-                    'foto_unggulan' => $q->foto_unggulan
-                ];
-            }
-            header('Content-Type: application/json');
-            echo json_encode(
-                [
-                    'status' => 'success',
-                    'data' => $arr
-                ]
-            );
-        }
-    }
+    // public function get_all_kost()
+    // {
+    //     $arr = [];
+    //     if ($this->input->post('apiKey') == $this->apiKey) {
+    //         $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, jenis_kost.jenis, kost.area_terdekat, kost.foto_unggulan')
+    //             ->from('kost')
+    //             ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
+    //             ->get()
+    //             ->result();
+    //         foreach ($query as $q) {
+    //             $arr[] = [
+    //                 'id_kost' => $q->id,
+    //                 'nama_kost' => $q->nama_kost,
+    //                 'pemilik' => $q->pemilik,
+    //                 'alamat' => $q->alamat,
+    //                 'no_hp' => $q->no_hp,
+    //                 'jenis' => $q->jenis,
+    //                 'area_terdekat' => $q->area_terdekat,
+    //                 'foto_unggulan' => $q->foto_unggulan
+    //             ];
+    //         }
+    //         header('Content-Type: application/json');
+    //         echo json_encode(
+    //             [
+    //                 'status' => 'success',
+    //                 'data' => $arr
+    //             ]
+    //         );
+    //     }
+    // }
     public function get_kost()
     {
         $arr = [];
@@ -52,7 +52,7 @@ class Api extends CI_Controller
                 $this->output->set_status_header(400);
             } else {
                 $id = $this->input->post('id');
-                $query = $this->db->select('kost.id, kost.nama_kost, operator.no_wa, operator.last_login, operator.last_logout, operator.avatar, pemilik.first_name as pemilik, kost.alamat, kost.hp, jenis_kost.id as jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost, operator.no_wa, operator.last_login, operator.last_logout, operator.avatar, pemilik.first_name as pemilik, kost.alamat, jenis_kost.id as jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
@@ -100,7 +100,7 @@ class Api extends CI_Controller
         $arr = [];
         if ($this->input->post('apiKey') == $this->apiKey) {
             $jenis = $this->input->post('jenis');
-            $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+            $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
                 ->from('kost')
                 ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                 ->join('kost_type', 'kost.type_kost = kost_type.id')
@@ -115,7 +115,6 @@ class Api extends CI_Controller
                     'id_kost' => $q->id,
                     'nama_kost' => $q->nama_kost,
                     'alamat' => $q->alamat,
-                    'no_hp' => $q->no_hp,
                     'jenis_id' => $q->jenis_kost,
                     'jenis' => $q->jenis,
                     'type' => $q->type,
@@ -137,46 +136,46 @@ class Api extends CI_Controller
     }
 
 
-    public function get_kost_detail()
-    {
-        $arr = [];
-        if ($this->input->post('apiKey') == $this->apiKey) {
-            $id_kost = $this->input->post('id_kost');
-            $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, users.first_name, kost.area_terdekat')
-                ->from('kost_detail')
-                ->join('kost_foto', 'kost_detail.id = kost_foto.kost_detail_id')
-                ->where('kost_detail.id_kost', $id_kost)
-                ->group_by('kost_detail.id')
-                ->get()
-                ->result();
-            if (count($query) == 0) {
-                $this->output->set_status_header(404);
-            } else {
-                foreach ($query as $q) {
-                    $arr[] = [
-                        'nama_kamar' => $q->nama_kamar,
-                        'deskripsi_kamar' => $q->deskripsi_kamar,
-                        'harga' => $q->harga,
-                        'fasilitas' => $q->fasilitas,
-                        'foto' => $q->foto
-                    ];
-                }
-                header('Content-Type: application/json');
-                echo json_encode(
-                    [
-                        'status' => 'success',
-                        'data' => $query
-                    ]
-                );
-            }
-        }
-    }
+    // public function get_kost_detail()
+    // {
+    //     $arr = [];
+    //     if ($this->input->post('apiKey') == $this->apiKey) {
+    //         $id_kost = $this->input->post('id_kost');
+    //         $query = $this->db->select('kost.id, kost.nama_kost, kost.pemilik, kost.alamat, kost.hp AS no_hp, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, users.first_name, kost.area_terdekat')
+    //             ->from('kost_detail')
+    //             ->join('kost_foto', 'kost_detail.id = kost_foto.kost_detail_id')
+    //             ->where('kost_detail.id_kost', $id_kost)
+    //             ->group_by('kost_detail.id')
+    //             ->get()
+    //             ->result();
+    //         if (count($query) == 0) {
+    //             $this->output->set_status_header(404);
+    //         } else {
+    //             foreach ($query as $q) {
+    //                 $arr[] = [
+    //                     'nama_kamar' => $q->nama_kamar,
+    //                     'deskripsi_kamar' => $q->deskripsi_kamar,
+    //                     'harga' => $q->harga,
+    //                     'fasilitas' => $q->fasilitas,
+    //                     'foto' => $q->foto
+    //                 ];
+    //             }
+    //             header('Content-Type: application/json');
+    //             echo json_encode(
+    //                 [
+    //                     'status' => 'success',
+    //                     'data' => $query
+    //                 ]
+    //             );
+    //         }
+    //     }
+    // }
     public function get_kost_by_input()
     {
         $arr = [];
         if ($this->input->post('apiKey') == $this->apiKey) {
             if ($this->input->post('input') == '') {
-                $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.hp AS no_hp,  kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat,  kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
@@ -188,7 +187,7 @@ class Api extends CI_Controller
                     ->result();
             } else {
                 $input = $this->input->post('input');
-                $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.hp AS no_hp,  kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
@@ -205,7 +204,6 @@ class Api extends CI_Controller
                     'id_kost' => $q->id,
                     'nama_kost' => $q->nama_kost,
                     'alamat' => $q->alamat,
-                    'no_hp' => $q->no_hp,
                     'jenis_id' => $q->jenis_kost,
                     'jenis' => $q->jenis,
                     'type' => $q->type,

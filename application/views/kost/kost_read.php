@@ -104,7 +104,7 @@
         //}
         ?>
         <!-- </table> --> -->
-        <a href="<?php echo site_url('kost') ?>" class="btn btn-secondary">Kembali</a>
+        <a href="<?php echo site_url('/') ?>" class="btn btn-secondary">Kembali</a>
     </div>
 
 </div>
