@@ -88,6 +88,15 @@
                         <label for="area_terdekat">Area Terdekat <?php echo form_error('area_terdekat') ?></label>
                         <textarea class="form-control" rows="3" name="area_terdekat" id="area_terdekat" placeholder="Area Terdekat"><?php echo $area_terdekat; ?></textarea>
                     </div>
+                    <div class="form-group">
+                        <label>Unggulan</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="unggulan" id="unggulan" value="1" <?php if ($unggulan_checked == 1) {
+                                                                                                                    echo 'checked';
+                                                                                                                } ?>>
+                            <label class="form-check-label" for="unggulan">Ya</label>
+                        </div>
+                    </div>
                     <div class="form-group" id="form-foto">
                         <label for="foto_kamar">Foto Kamar</label>
                         <div class="row">

@@ -52,7 +52,7 @@ class Api extends CI_Controller
                 $this->output->set_status_header(400);
             } else {
                 $id = $this->input->post('id');
-                $query = $this->db->select('kost.id, kost.nama_kost, operator.no_wa, operator.last_login, operator.last_logout, operator.avatar, pemilik.first_name as pemilik, kost.alamat, jenis_kost.id as jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost, operator.no_wa, operator.last_login, operator.last_logout, operator.avatar, pemilik.first_name as pemilik, kost.alamat, jenis_kost.id as jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat, kost_unggulan')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
@@ -86,7 +86,8 @@ class Api extends CI_Controller
                             'type' => $query->type,
                             'harga' => $query->harga,
                             'foto' => $foto,
-                            'area_terdekat' => $query->area_terdekat
+                            'area_terdekat' => $query->area_terdekat,
+                            'unggulan' => $query->kost_unggulan
                         ]
                     ]
                 );
@@ -100,12 +101,52 @@ class Api extends CI_Controller
         $arr = [];
         if ($this->input->post('apiKey') == $this->apiKey) {
             $jenis = $this->input->post('jenis');
-            $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+            $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat, kost.unggulan')
                 ->from('kost')
                 ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                 ->join('kost_type', 'kost.type_kost = kost_type.id')
                 ->join('kost_foto', 'kost_foto.kost_id=kost.id')
                 ->where('kost.jenis_kost', $jenis)
+                ->group_by('kost.id')
+                ->get()
+                ->result();
+            foreach ($query as $q) {
+                $foto = explode(',', $q->foto);
+                $arr[] = [
+                    'id_kost' => $q->id,
+                    'nama_kost' => $q->nama_kost,
+                    'alamat' => $q->alamat,
+                    'jenis_id' => $q->jenis_kost,
+                    'jenis' => $q->jenis,
+                    'type' => $q->type,
+                    'harga' => $q->harga,
+                    'area_terdekat' => $q->area_terdekat,
+                    'unggulan' => $q->unggulan,
+                    'foto' => reset($foto),
+                ];
+            }
+            header('Content-Type: application/json');
+            echo json_encode(
+                [
+                    'status' => 'success',
+                    'data' => $arr
+                ]
+            );
+        } else {
+            $this->output->set_status_header(403);
+        }
+    }
+
+    public function get_kost_unggulan()
+    {
+        $arr = [];
+        if ($this->input->post('apiKey') == $this->apiKey) {
+            $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+                ->from('kost')
+                ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
+                ->join('kost_type', 'kost.type_kost = kost_type.id')
+                ->join('kost_foto', 'kost_foto.kost_id=kost.id')
+                ->where('kost.unggulan', 1)
                 ->group_by('kost.id')
                 ->get()
                 ->result();
@@ -134,7 +175,6 @@ class Api extends CI_Controller
             $this->output->set_status_header(403);
         }
     }
-
 
     // public function get_kost_detail()
     // {
@@ -175,7 +215,7 @@ class Api extends CI_Controller
         $arr = [];
         if ($this->input->post('apiKey') == $this->apiKey) {
             if ($this->input->post('input') == '') {
-                $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat,  kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat,  kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat, kost.unggulan')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
@@ -187,7 +227,7 @@ class Api extends CI_Controller
                     ->result();
             } else {
                 $input = $this->input->post('input');
-                $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat')
+                $query = $this->db->select('kost.id, kost.nama_kost, kost.alamat, kost.jenis_kost, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(kost_foto.foto) AS foto, kost.area_terdekat, kost.unggulan')
                     ->from('kost')
                     ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
                     ->join('kost_type', 'kost.type_kost = kost_type.id')
@@ -209,6 +249,7 @@ class Api extends CI_Controller
                     'type' => $q->type,
                     'harga' => $q->harga,
                     'area_terdekat' => $q->area_terdekat,
+                    'unggulan' => $q->unggulan,
                     'foto' => reset($foto),
                 ];
             }
@@ -222,6 +263,10 @@ class Api extends CI_Controller
         } else {
             $this->output->set_status_header(403);
         }
+    }
+
+    public function get_kost_terbaru() {
+
     }
 
     public function get_jenis()

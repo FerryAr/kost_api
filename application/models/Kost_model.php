@@ -18,7 +18,7 @@ class Kost_model extends CI_Model
 
     // datatables
     function json() {
-        $this->datatables->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, jenis_kost.jenis, kost_type.type, FORMAT(kost.harga, 0, "id_ID") AS harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat');
+        $this->datatables->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, jenis_kost.jenis, kost_type.type, FORMAT(kost.harga, 0, "id_ID") AS harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat, kost.unggulan');
         $this->datatables->from('kost');
         $this->datatables->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id');
         $this->datatables->join('kost_type', 'kost.type_kost = kost_type.id');
@@ -35,7 +35,7 @@ class Kost_model extends CI_Model
     }
 
     function json_pemilik($pemilik) {
-        $this->datatables->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat');
+        $this->datatables->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat, kost.unggulan');
         $this->datatables->from('kost');
         $this->datatables->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id');
         $this->datatables->join('kost_type', 'kost.type_kost = kost_type.id');
@@ -53,7 +53,7 @@ class Kost_model extends CI_Model
     }
 
     function json_operator($id) {
-        $this->datatables->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat');
+        $this->datatables->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat, kost.unggulan');
         $this->datatables->from('kost');
         $this->datatables->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id');
         $this->datatables->join('kost_type', 'kost.type_kost = kost_type.id');
@@ -71,7 +71,7 @@ class Kost_model extends CI_Model
     }
 
     function json_list() {
-        $this->datatables->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat');
+        $this->datatables->select('kost.id, kost.nama_kost,  pemilik.first_name as pemilik, kost.alamat, jenis_kost.jenis, kost_type.type, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, operator.first_name, kost.area_terdekat, kost.unggulan');
         $this->datatables->from('kost');
         $this->datatables->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id');
         $this->datatables->join('kost_type', 'kost.type_kost = kost_type.id');
@@ -97,7 +97,7 @@ class Kost_model extends CI_Model
     // get data by id
     function get_by_id($id)
     {
-        $query = $this->db->select('kost.id, kost.nama_kost, pemilik.first_name AS nama_pemilik, kost_type.type, kost_pemilik.pemilik_id AS pemilik, kost.alamat, jenis_kost.jenis, kost.jenis_kost, kost.type_kost, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, kost.operator, operator.first_name, kost.area_terdekat')
+        $query = $this->db->select('kost.id, kost.nama_kost, pemilik.first_name AS nama_pemilik, kost_type.type, kost_pemilik.pemilik_id AS pemilik, kost.alamat, jenis_kost.jenis, kost.jenis_kost, kost.type_kost, kost.harga, GROUP_CONCAT(DISTINCT kost_fasilitas.fasilitas) AS fasilitas, GROUP_CONCAT(DISTINCT kost_foto.foto) AS foto, kost.operator, operator.first_name, kost.unggulan, kost.area_terdekat')
             ->from('kost')
             ->join('jenis_kost', 'kost.jenis_kost = jenis_kost.id')
             ->join('kost_type', 'kost.type_kost = kost_type.id')

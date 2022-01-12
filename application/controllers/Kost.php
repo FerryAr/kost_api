@@ -164,6 +164,7 @@ class Kost extends CI_Controller
             'fasilitas_selected' => [],
             'pemilik_selected' => '',
             'operator_selected' => '',
+            'unggulan_checked' => '',
             'harga' => set_value('harga'),
             'area_terdekat' => set_value('area_terdekat'),
             'first_name' => $this->ion_auth->user()->row()->first_name,
@@ -188,6 +189,8 @@ class Kost extends CI_Controller
                     'type_kost' => $this->input->post('type_kost', TRUE),
                     'harga' => $this->input->post('harga'),
                     'area_terdekat' => $this->input->post('area_terdekat', TRUE),
+                    'unggulan' => $this->input->post('unggulan', TRUE),
+                    'update_time' => time()
                 );
                 if($this->ion_auth->is_admin() || $this->ion_auth->in_group('operator')){
                     $pemilik = $this->input->post('pemilik', TRUE);
@@ -261,6 +264,7 @@ class Kost extends CI_Controller
                 'harga' => set_value('harga', $row->harga),
                 'operator' => $operator,
                 'operator_selected' => $row->operator,
+                'unggulan_checked' => $row->unggulan,
                 'fasilitas' => $fasilitas,
                 'foto' => $row->foto,
                 'area_terdekat' => set_value('area_terdekat', $row->area_terdekat),
@@ -295,6 +299,8 @@ class Kost extends CI_Controller
                     'type_kost' => $this->input->post('type_kost', TRUE),
                     'harga' => $this->input->post('harga'),
                     'area_terdekat' => $this->input->post('area_terdekat', TRUE),
+                    'unggulan' => $this->input->post('unggulan', TRUE),
+                    'update_time' => time()
                 );
                 if($this->ion_auth->is_admin() || $this->ion_auth->in_group('operator')){
                     $pemilik = $this->input->post('pemilik', TRUE);
