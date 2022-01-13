@@ -554,6 +554,7 @@ class Api extends CI_Controller
             $query = $this->db->select('blog.id, blog.thumbnail, kategori_blog.nama_kategori, blog.judul, blog.isi, blog.dibuat_pada')
                 ->from('blog')
                 ->join('kategori_blog', 'kategori_blog.id = blog.kategori_id')
+                ->limit(9)
                 ->order_by('blog.id', 'desc')
                 ->get()
                 ->result();
@@ -574,6 +575,37 @@ class Api extends CI_Controller
                     'data' => $arr,
                 ]
             );
+        } else {
+            $this->output->set_status_header(403);
+        }
+    }
+    public function get_blog()
+    {
+        if($this->input->post('apiKey') == $this->apiKey) {
+            if(empty($this->input->post('id'))) {
+                $this->output->set_status_header(400);
+            } else {
+                $query = $this->db->select('blog.id, blog.thumbnail, kategori_blog.nama_kategori, blog.judul, blog.isi, blog.dibuat_pada')
+                    ->from('blog')
+                    ->join('kategori_blog', 'kategori_blog.id = blog.kategori_id')
+                    ->where('blog.id', $this->input->post('id'))
+                    ->get()->row();
+                header('Content-Type: application/json');
+                echo json_encode(
+                    [
+                        'status' => 'success',
+                        'data' => [
+                            'id' => $query->id,
+                            'thumbnail' => $query->thumbnail,
+                            'kategori' => $query->nama_kategori,
+                            'judul' => $query->judul,
+                            'isi' => $query->isi,
+                            'dibuat_pada' => $query->dibuat_pada,
+                        ],
+                    ]
+                );
+
+            }
         } else {
             $this->output->set_status_header(403);
         }
