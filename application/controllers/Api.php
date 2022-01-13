@@ -87,7 +87,7 @@ class Api extends CI_Controller
                             'harga' => $query->harga,
                             'foto' => $foto,
                             'area_terdekat' => $query->area_terdekat,
-                            'unggulan' => $query->kost_unggulan
+                            'unggulan' => $query->unggulan
                         ]
                     ]
                 );
