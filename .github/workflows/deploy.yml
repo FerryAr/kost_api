@@ -12,9 +12,9 @@ jobs:
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@4.2.0
       with:
-        server: ftp.diengcyber.com
-        username: azrl@diengcyber.com
-        password: ${{ secrets.ftp_password }}
+        server: ftpupload.net
+        username: epiz_30856733
+        password: ${{ secrets.ftp_pass_sekolah }}
         exclude: .git*
           - .git*/**
           - **/.git*/**
