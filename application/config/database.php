@@ -75,9 +75,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'diengcyber_kost',
-	'password' => 'dcsAaSsDd#3',
+	'hostname' => 'sql204.epizy.com',
+	'username' => 'epiz_30856733',
+	'password' => 'yRBFMsuqrGe8mr',
 	'database' => 'diengcyber_kost',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
