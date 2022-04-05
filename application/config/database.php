@@ -75,10 +75,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'sql204.epizy.com',
-	'username' => 'epiz_30856733',
-	'password' => 'yRBFMsuqrGe8mr',
-	'database' => 'epiz_30856733_kost',
+	'hostname' => 'localhost',
+	'username' => 'kostapim_azrl',
+	'password' => 'psycogenesis78',
+	'database' => 'kostapim_zobokost',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
