@@ -15,7 +15,6 @@ jobs:
         server: ftp.kost-api.my.id
         username: azrl@kost-api.my.id
         password: ${{ secrets.ftp_pass_sekolah }}
-        server-dir: htdocs/
         exclude: .git*
           - .git*/**
           - **/.git*/**
